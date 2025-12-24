@@ -1,5 +1,7 @@
 "use client"
 
+import { useMemo } from "react"
+import { useRouter } from "next/navigation"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,20 +14,39 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./ui/modeToggle"
+import { useAuth } from "@/hooks/use-auth"
 
 export function NavbarDash() {
-    const user = {
-        name: "Jean Dupont",
-        email: "jean@gmail.com",
-        avatar: "/avatars/user.jpg",
+    const { user, logout } = useAuth()
+    const router = useRouter()
+
+    const displayName = useMemo(() => {
+        if (!user) return "Utilisateur"
+        if (user.prenom || user.nom) {
+            return `${user.prenom ?? ""} ${user.nom ?? ""}`.trim()
+        }
+        return user.username ?? "Utilisateur"
+    }, [user])
+
+    const email = user?.email ?? ""
+
+    const initials = useMemo(() => {
+        if (!displayName) return "U"
+        return displayName
+            .split(" ")
+            .filter(Boolean)
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+    }, [displayName])
+
+    const handleProfileClick = () => {
+        router.push("/dashboard/profile")
     }
 
-    // Récupère les initiales du nom
-    const initials = user.name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
+    const handleLogoutClick = () => {
+        logout()
+    }
 
     return (
         <div className="flex items-center gap-4">
@@ -41,7 +62,7 @@ export function NavbarDash() {
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                         <Avatar className="h-10 w-10">
-                            <AvatarImage src={user.avatar} alt={user.name} />
+                            {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
                             <AvatarFallback>{initials}</AvatarFallback>
                         </Avatar>
                     </Button>
@@ -49,14 +70,14 @@ export function NavbarDash() {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
-                            <p className="text-sm font-medium leading-none">{user.name}</p>
+                            <p className="text-sm font-medium leading-none">{displayName}</p>
                             <p className="text-xs leading-none text-muted-foreground">
-                                {user.email}
+                                {email}
                             </p>
                         </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleProfileClick}>
                         Profil
                     </DropdownMenuItem>
                     <DropdownMenuItem>
@@ -66,7 +87,7 @@ export function NavbarDash() {
                         Facturation
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600">
+                    <DropdownMenuItem className="text-red-600" onClick={handleLogoutClick}>
                         Se déconnecter
                     </DropdownMenuItem>
                 </DropdownMenuContent>

@@ -16,6 +16,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { menuConfig, UserRole } from "@/lib/menu-config"
+import { useAuth } from "@/hooks/use-auth"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   userRole: UserRole
@@ -23,16 +24,24 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function AppSidebar({ userRole, ...props }: AppSidebarProps) {
   const { state } = useSidebar()
+  const { user, logout } = useAuth()
 
-  // Récupère le menu selon le rôle
   const menuData = menuConfig[userRole]
 
-  // Données utilisateur (à remplacer par tes vraies données)
+  const displayName = (() => {
+    if (!user) return "Utilisateur"
+    if (user.prenom || user.nom) {
+      return `${user.prenom ?? ""} ${user.nom ?? ""}`.trim()
+    }
+    return user.username ?? "Utilisateur"
+  })()
+
+  const email = user?.email ?? ""
+
   const userData = {
-    name: "John Doe",
-    email: "john@example.com",
+    name: displayName,
+    email,
     avatar: "/avatars/user.jpg",
-    role: userRole,
   }
 
   return (
@@ -49,7 +58,7 @@ export function AppSidebar({ userRole, ...props }: AppSidebarProps) {
         <NavMain items={menuData.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={userData} />
+        <NavUser user={userData} onLogout={logout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

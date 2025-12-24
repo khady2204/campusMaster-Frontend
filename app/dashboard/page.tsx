@@ -4,22 +4,38 @@ import { UserRole } from "@/lib/menu-config"
 import { AdminDashboard } from "@/components/dashboards/admin-dashboard"
 import { EnseignantDashboard } from "@/components/dashboards/enseignant-dashboard"
 import { EtudiantDashboard } from "@/components/dashboards/etudiant-dashboard"
+import { mapUserRole } from "@/lib/menu-config"
+import { useAuth } from "@/hooks/use-auth"
 
 export default function DashboardPage() {
-  
-  // Récupère le vrai rôle depuis ton auth
-  const userRole: UserRole = "admin"
-  
-  // Affiche le dashboard selon le rôle
-  if (userRole === "admin") {
+  const { user, loading } = useAuth()
+  const userRole = mapUserRole(user?.role) as UserRole | null
+
+  if (loading) {
+    return (
+      <div className="p-6">
+        <p>Chargement du tableau de bord...</p>
+      </div>
+    )
+  }
+
+  if (!userRole) {
+    return (
+      <div className="p-6">
+        <p>Erreur : rôle utilisateur non reconnu</p>
+      </div>
+    )
+  }
+
+  if (userRole === "Administrateur") {
     return <AdminDashboard />
   }
   
-  if (userRole === "enseignant") {
+  if (userRole === "Enseignant") {
     return <EnseignantDashboard />
   }
   
-  if (userRole === "etudiant") {
+  if (userRole === "Etudiant") {
     return <EtudiantDashboard />
   }
   

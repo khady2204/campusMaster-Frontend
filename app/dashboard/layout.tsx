@@ -2,30 +2,34 @@
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { NavbarDash } from "@/components/navbar-dash"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { UserRole } from "@/lib/menu-config"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { mapUserRole, UserRole } from "@/lib/menu-config"
+import { useAuth } from "@/hooks/use-auth"
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const { user, loading } = useAuth()
+  const userRole = mapUserRole(user?.role) as UserRole | null
 
-  // Rôle de l'utilisateur
-  const userRole: UserRole = "admin" // ou "admin" ou "enseignant"
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Chargement du tableau de bord...</p>
+      </div>
+    )
+  }
+
+  if (!userRole) {
+    return (
+      <div className="p-6">
+        <p>Erreur : rôle utilisateur non reconnu</p>
+      </div>
+    )
+  }
   
   return (
     <SidebarProvider>
@@ -41,7 +45,7 @@ export default function DashboardLayout({
           {/* Droite */}
           <NavbarDash />
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex flex-1 flex-col gap-4 p-4">
           {children}
         </div>
       </SidebarInset>

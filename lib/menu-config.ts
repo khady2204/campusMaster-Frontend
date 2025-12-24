@@ -9,12 +9,32 @@ import {
   BarChart,
   ClipboardList,
   Video,
+  BookmarkIcon,
 } from "lucide-react"
 
-export type UserRole = "admin" | "etudiant" | "enseignant"
+export type UserRole = "Administrateur" | "Etudiant" | "Enseignant"
+
+export function mapUserRole(rawRole?: string | null): UserRole | null {
+  if (!rawRole) return null
+  const role = rawRole.toLowerCase()
+  switch (role) {
+    case "administrateur":
+    case "admin":
+      return "Administrateur"
+    case "etudiant":
+    case "student":
+      return "Etudiant"
+    case "enseignant":
+    case "professeur":
+    case "teacher":
+      return "Enseignant"
+    default:
+      return null
+  }
+}
 
 export const menuConfig = {
-  admin: {
+  Administrateur: {
     navMain: [
       {
         title: "Tableau de bord",
@@ -24,41 +44,56 @@ export const menuConfig = {
       },
       {
         title: "Utilisateurs",
-        url: "/dashboard/utilisateurs",
+        url: "/dashboard/admin/utilisateurs",
         icon: Users,
         items: [
           {
             title: "Étudiants",
-            url: "/dashboard/utilisateurs/etudiants",
+            url: "/dashboard/admin/utilisateurs/etudiants",
           },
           {
             title: "Enseignants",
-            url: "/dashboard/utilisateurs/enseignants",
+            url: "/dashboard/admin/utilisateurs/enseignants",
           },
           {
             title: "Administrateurs",
-            url: "/dashboard/utilisateurs/admins",
+            url: "/dashboard/admin/utilisateurs/admins",
+          },
+        ],
+      },
+      {
+        title: "Modules",
+        url: "/dashboard/admin/modules",
+        icon: BookmarkIcon,
+        items: [
+          {
+            title: "Liste des modules",
+            url: "/dashboard/admin/modules",
+          },
+          {
+            title: "Créer un module",
+            url: "/dashboard/admin/modules/create",
           },
         ],
       },
       {
         title: "Cours",
-        url: "/dashboard/cours",
+        url: "/dashboard/admin/cours",
         icon: BookOpen,
         items: [
           {
             title: "Liste des cours",
-            url: "/dashboard/cours",
+            url: "/dashboard/admin/cours",
           },
           {
             title: "Créer un cours",
-            url: "/dashboard/cours/create",
+            url: "/dashboard/admin/cours/create",
           },
         ],
       },
       {
         title: "Statistiques",
-        url: "/dashboard/statistiques",  // ← Corrigé (enlevé /admin)
+        url: "/dashboard/admin/statistiques",
         icon: BarChart,
       },
       {
@@ -68,11 +103,11 @@ export const menuConfig = {
       },
     ],
   },
-  enseignant: {
+  Enseignant: {
     navMain: [
       {
         title: "Tableau de bord",
-        url: "/dashboard",  // ← OK
+        url: "/dashboard",
         icon: LayoutDashboard,
         isActive: true,
       },
@@ -122,11 +157,11 @@ export const menuConfig = {
       },
     ],
   },
-  etudiant: {
+  Etudiant: {
     navMain: [
       {
         title: "Tableau de bord",
-        url: "/dashboard/etudiant",  // ← OK
+        url: "/dashboard",
         icon: LayoutDashboard,
         isActive: true,
       },

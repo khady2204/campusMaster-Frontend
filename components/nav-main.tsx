@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import {
@@ -9,7 +10,6 @@ import {
 } from "@/components/ui/collapsible"
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -32,12 +32,13 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const router = useRouter()
+
   return (
     <SidebarGroup>
       
       <SidebarMenu>
         {items.map((item) => {
-          // Si pas de sous-menus, affiche un lien simple
           if (!item.items || item.items.length === 0) {
             return (
               <SidebarMenuItem key={item.title}>
@@ -51,7 +52,6 @@ export function NavMain({
             )
           }
 
-          // Si sous-menus, affiche avec Collapsible et chevron
           return (
             <Collapsible
               key={item.title}
@@ -61,7 +61,10 @@ export function NavMain({
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title}>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    onClick={() => router.push(item.url)}
+                  >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
