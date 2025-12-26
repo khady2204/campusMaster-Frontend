@@ -12,6 +12,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BadgeCheck, Edit2, Trash2, UserCircle2 } from "lucide-react";
@@ -170,24 +180,116 @@ export default function Admins() {
     }
   };
 
-  // Ajout d'un administrateur (implémentation à adapter selon ton API)
-  const handleAddAdmin = () => {
-    // Pour rester simple, on ne fait ici que documenter l'endroit
-    // où tu pourras ouvrir un formulaire (Sheet, Dialog...) pour créer un admin.
-    // Exemple : ouvrir un Drawer avec un formulaire de création.
-    alert(
-      "TODO: ouvrir un formulaire de création d'administrateur (à implémenter selon l'API)."
-    );
+  // Ajout d'un administrateur via POST /users
+  const handleAddAdmin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    const prenom = (formData.get("prenom") as string | null)?.trim() || "";
+    const nom = (formData.get("nom") as string | null)?.trim() || "";
+    const email = (formData.get("email") as string | null)?.trim() || "";
+    const username = (formData.get("username") as string | null)?.trim() || "";
+    const telephone =
+      (formData.get("telephone") as string | null)?.trim() || "";
+    const adresse = (formData.get("adresse") as string | null)?.trim() || "";
+    const password = (formData.get("password") as string | null)?.trim() || "";
+
+    try {
+      // Rôle forcé à "administrateur" et compte actif par défaut
+      const payload: Record<string, unknown> = {
+        prenom,
+        nom,
+        email,
+        username,
+        telephone,
+        adresse,
+        role: "administrateur",
+        active: true,
+      };
+
+      if (password) {
+        payload.password = password;
+      }
+
+      const created = await apiClient.post<User>("/users", payload);
+
+      if (mapUserRole(created.role) === "Administrateur") {
+        setAdmins((current) => [...current, created]);
+        setSelectedAdmin((current) => current ?? created);
+      }
+
+      form.reset();
+    } catch (e) {
+      const message =
+        e instanceof Error
+          ? e.message
+          : "Erreur lors de la création de l'administrateur";
+      setError(message);
+    }
   };
 
-  // Edition d'un administrateur (mêmes remarques que pour l'ajout)
-  const handleEditAdmin = (admin: User) => {
-    // Même principe que pour handleAddAdmin: on peut ouvrir un formulaire
-    // pré-rempli avec les données de l'admin sélectionné, puis appeler
-    // PUT /users/{id} côté backend.
-    alert(
-      `TODO: ouvrir un formulaire d'édition pour ${admin.prenom} ${admin.nom} (à implémenter).`
-    );
+  // Edition d'un administrateur via PUT /users/{id}
+  const handleEditAdmin = (
+    event: React.FormEvent<HTMLFormElement>,
+    admin: User
+  ) => {
+    event.preventDefault();
+    setError(null);
+
+    const formData = new FormData(event.currentTarget);
+
+    const prenom = (formData.get("prenom") as string | null)?.trim() || "";
+    const nom = (formData.get("nom") as string | null)?.trim() || "";
+    const email = (formData.get("email") as string | null)?.trim() || "";
+    const username = (formData.get("username") as string | null)?.trim() || "";
+    const telephone =
+      (formData.get("telephone") as string | null)?.trim() || "";
+    const adresse = (formData.get("adresse") as string | null)?.trim() || "";
+    const password = (formData.get("password") as string | null)?.trim() || "";
+    const active = formData.get("active") !== null;
+
+    const updateAdmin = async () => {
+      try {
+        const payload: Record<string, unknown> = {
+          prenom,
+          nom,
+          email,
+          username,
+          telephone,
+          adresse,
+          role: admin.role,
+          active,
+        };
+
+        if (password) {
+          payload.password = password;
+        }
+
+        const updated = await apiClient.put<User>(
+          `/users/${admin.id}`,
+          payload
+        );
+
+        setAdmins((current) =>
+          current.map((a) => (a.id === admin.id ? updated : a))
+        );
+
+        setSelectedAdmin((current) =>
+          current && current.id === admin.id ? updated : current
+        );
+      } catch (e) {
+        const message =
+          e instanceof Error
+            ? e.message
+            : "Erreur lors de la modification de l'administrateur";
+        setError(message);
+      }
+    };
+
+    void updateAdmin();
   };
 
   return (
@@ -201,9 +303,74 @@ export default function Admins() {
           </p>
         </div>
 
-        <Button onClick={handleAddAdmin}>
-          + Ajouter un administrateur
-        </Button>
+        {/* Dialog d'ajout d'un administrateur */}
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>+ Ajouter un administrateur</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle>Ajouter un administrateur</DialogTitle>
+              <DialogDescription>
+                Renseigne les informations de base de l&apos;administrateur.
+              </DialogDescription>
+            </DialogHeader>
+            <form className="space-y-4" onSubmit={handleAddAdmin}>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="add-prenom">Prénom</Label>
+                  <Input id="add-prenom" name="prenom" required />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="add-nom">Nom</Label>
+                  <Input id="add-nom" name="nom" required />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="add-email">Email</Label>
+                  <Input
+                    id="add-email"
+                    name="email"
+                    type="email"
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="add-username">Identifiant</Label>
+                  <Input id="add-username" name="username" required />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="add-password">Mot de passe</Label>
+                  <Input
+                    id="add-password"
+                    name="password"
+                    type="password"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="add-telephone">Téléphone</Label>
+                <Input id="add-telephone" name="telephone" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="add-adresse">Adresse</Label>
+                <Input id="add-adresse" name="adresse" />
+              </div>
+              <DialogFooter className="mt-4">
+                <DialogClose asChild>
+                  <Button type="button" variant="outline">
+                    Annuler
+                  </Button>
+                </DialogClose>
+                <Button type="submit">Enregistrer</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Zone de recherche et d'informations */}
@@ -362,18 +529,141 @@ export default function Admins() {
                           >
                             <UserCircle2 className="h-4 w-4" />
                           </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            className="h-8 w-8"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditAdmin(admin);
-                            }}
-                            title="Modifier"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-8 w-8"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                }}
+                                title="Modifier"
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-lg">
+                              <DialogHeader>
+                                <DialogTitle>
+                                  Modifier l&apos;administrateur
+                                </DialogTitle>
+                                <DialogDescription>
+                                  Mets à jour les informations de cet administrateur.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <form
+                                className="space-y-4"
+                                onSubmit={(event) =>
+                                  handleEditAdmin(event, admin)
+                                }
+                              >
+                                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                  <div className="grid gap-2">
+                                    <Label htmlFor={`edit-prenom-${admin.id}`}>
+                                      Prénom
+                                    </Label>
+                                    <Input
+                                      id={`edit-prenom-${admin.id}`}
+                                      name="prenom"
+                                      defaultValue={admin.prenom}
+                                    />
+                                  </div>
+                                  <div className="grid gap-2">
+                                    <Label htmlFor={`edit-nom-${admin.id}`}>
+                                      Nom
+                                    </Label>
+                                    <Input
+                                      id={`edit-nom-${admin.id}`}
+                                      name="nom"
+                                      defaultValue={admin.nom}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                  <div className="grid gap-2">
+                                    <Label htmlFor={`edit-email-${admin.id}`}>
+                                      Email
+                                    </Label>
+                                    <Input
+                                      id={`edit-email-${admin.id}`}
+                                      name="email"
+                                      type="email"
+                                      defaultValue={admin.email}
+                                    />
+                                  </div>
+                                  <div className="grid gap-2">
+                                    <Label htmlFor={`edit-username-${admin.id}`}>
+                                      Identifiant
+                                    </Label>
+                                    <Input
+                                      id={`edit-username-${admin.id}`}
+                                      name="username"
+                                      defaultValue={admin.username}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                  <div className="grid gap-2">
+                                    <Label htmlFor={`edit-password-${admin.id}`}>
+                                      Mot de passe
+                                    </Label>
+                                    <Input
+                                      id={`edit-password-${admin.id}`}
+                                      name="password"
+                                      type="password"
+                                      placeholder="Laisser vide pour ne pas changer"
+                                    />
+                                  </div>
+                                  <div className="flex items-center gap-2 pt-6">
+                                    <input
+                                      id={`edit-active-${admin.id}`}
+                                      name="active"
+                                      type="checkbox"
+                                      defaultChecked={admin.active}
+                                      className="h-4 w-4 rounded border border-input"
+                                    />
+                                    <Label
+                                      htmlFor={`edit-active-${admin.id}`}
+                                      className="text-sm font-medium"
+                                    >
+                                      Compte actif
+                                    </Label>
+                                  </div>
+                                </div>
+                                <div className="grid gap-2">
+                                  <Label htmlFor={`edit-telephone-${admin.id}`}>
+                                    Téléphone
+                                  </Label>
+                                  <Input
+                                    id={`edit-telephone-${admin.id}`}
+                                    name="telephone"
+                                    defaultValue={admin.telephone}
+                                  />
+                                </div>
+                                <div className="grid gap-2">
+                                  <Label htmlFor={`edit-adresse-${admin.id}`}>
+                                    Adresse
+                                  </Label>
+                                  <Input
+                                    id={`edit-adresse-${admin.id}`}
+                                    name="adresse"
+                                    defaultValue={admin.adresse}
+                                  />
+                                </div>
+                                <DialogFooter className="mt-4">
+                                  <DialogClose asChild>
+                                    <Button type="button" variant="outline">
+                                      Annuler
+                                    </Button>
+                                  </DialogClose>
+                                  <DialogClose asChild>
+                                    <Button type="submit">Enregistrer</Button>
+                                  </DialogClose>
+                                </DialogFooter>
+                              </form>
+                            </DialogContent>
+                          </Dialog>
                           <Button
                             size="icon"
                             variant="destructive"

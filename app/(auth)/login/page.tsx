@@ -61,8 +61,9 @@ export default function Login() {
     }
 
     return (
-        <div className="flex justify-center items-center min-h-screen">
-            <Card className="min-w-sm px-4 py-10 rounded-lg shadow-md">
+        <div className="flex justify-center items-center min-h-screen loginPage">
+            <div className="flex justify-center items-center card-content min-h-screen w-full">
+                <Card className="min-w-sm px-4 py-10 rounded-lg border shadow bg-transparent dark:bg-transparent z-50">
                 
                 <CardTitle className="text-center">Connexion</CardTitle>
                 
@@ -125,6 +126,7 @@ export default function Login() {
                     </form>
                 </Form>
             </Card>
+            </div>
         </div>
     );
 }
