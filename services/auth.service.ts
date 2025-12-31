@@ -1,36 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // services/auth.service.ts
 import { apiClient } from "@/lib/api-client";
-
-export interface LoginCredentials {
-  identifier: string;
-  password: string;
-}
-
-export interface User {
-  id: string;
-  username: string;
-  prenom: string;
-  nom: string;
-  email: string;
-  telephone: string;
-  adresse: string;
-  role: string;
-  createdAt: string;
-  updatedAt: string;
-  lastLoginAt: string;
-  active: boolean;
-  emailVerified: boolean;
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
-  user: User;
-}
+import { AuthResponse, LoginCredentials, User } from "@/types/auth";
 
 export class AuthService {
+  // Connexion utilisateur
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try { 
       // Le backend attend "identifier" et "password"
@@ -46,7 +20,10 @@ export class AuthService {
       
       // Stocker les infos utilisateur
       if (typeof window !== 'undefined') {
-        localStorage.setItem('refreshToken', response.refreshToken);
+        // On ne stocke le refreshToken que s'il est présent dans la réponse
+        if (response.refreshToken) {
+          localStorage.setItem('refreshToken', response.refreshToken);
+        }
         
         if (response.user) {
           localStorage.setItem('user', JSON.stringify(response.user));
@@ -60,6 +37,7 @@ export class AuthService {
     }
   }
 
+  // Déconnexion
   logout(): void {
     apiClient.removeToken();
     if (typeof window !== 'undefined') {
@@ -69,12 +47,13 @@ export class AuthService {
     }
   }
 
+  // Récupérer l'utilisateur courant
   getCurrentUser(): User | null {
     if (typeof window !== 'undefined') {
       const userStr = localStorage.getItem('user');
       if (userStr && userStr !== 'undefined') {
         try {
-          return JSON.parse(userStr);
+          return JSON.parse(userStr) as User;
         } catch {
           return null;
         }
@@ -83,6 +62,7 @@ export class AuthService {
     return null;
   }
 
+  // Vérifie si un token est présent
   isAuthenticated(): boolean {
     return !!apiClient.getToken();
   }
