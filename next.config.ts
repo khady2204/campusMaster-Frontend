@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
         hostname: 'avatar.iran.liara.run',
       },
     ],
+    domains: ['localhost'],
   },
 };
 
