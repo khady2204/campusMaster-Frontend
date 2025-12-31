@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { apiClient } from "@/lib/api-client";
-import { User } from "@/services/auth.service";
+import { User } from "@/types/auth";
 import { mapUserRole } from "@/lib/menu-config";
 import {
   ChartContainer,
@@ -80,6 +80,7 @@ const statusChartConfig: ChartConfig = {
 };
 
 export default function Utilisateurs() {
+  
   // Contient les statistiques calculées
   const [stats, setStats] = useState<UserStats>(initialStats);
   // Indique si on est en cours de chargement

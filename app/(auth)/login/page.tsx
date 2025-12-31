@@ -22,7 +22,7 @@ import { useAuth } from "@/hooks/use-auth"
 
 // Schéma de validation avec Zod
 const loginSchema = z.object({
-    identifier: z.string().min(2, {
+    username: z.string().min(2, {
         message: "Veuillez entrer un identifiant au moins 2 caractères .",
     }),
     password: z.string().min(6, {
@@ -43,7 +43,7 @@ export default function Login() {
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema), // Intègre la validation Zod
         defaultValues: {
-            identifier: "",
+            username: "",
             password: "",
         },
     })
@@ -80,7 +80,7 @@ export default function Login() {
                         {/* Champ Email */}
                         <FormField
                             control={form.control}
-                            name="identifier"
+                            name="username"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Nom d'utilisateur</FormLabel>

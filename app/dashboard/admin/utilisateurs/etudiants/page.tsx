@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/api-client";
-import { User } from "@/services/auth.service";
+import { User } from "@/types/auth";
 import { mapUserRole } from "@/lib/menu-config";
 import {
   Card,
