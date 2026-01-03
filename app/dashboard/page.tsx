@@ -5,19 +5,19 @@ import { AdminDashboard } from "@/components/dashboards/admin-dashboard"
 import { EnseignantDashboard } from "@/components/dashboards/enseignant-dashboard"
 import { EtudiantDashboard } from "@/components/dashboards/etudiant-dashboard"
 import { mapUserRole } from "@/lib/menu-config"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/core/hooks/useAuth"
 
 export default function DashboardPage() {
-  const { user, loading } = useAuth()
+  const { user } = useAuth()
   const userRole = mapUserRole(user?.role) as UserRole | null
 
-  if (loading) {
-    return (
-      <div className="p-6">
-        <p>Chargement du tableau de bord...</p>
-      </div>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="p-6">
+  //       <p>Chargement du tableau de bord...</p>
+  //     </div>
+  //   )
+  // }
 
   if (!userRole) {
     return (

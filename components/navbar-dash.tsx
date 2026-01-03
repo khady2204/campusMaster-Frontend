@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./ui/modeToggle"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/core/hooks/useAuth"
 
 export function NavbarDash() {
     const { user, logout } = useAuth()
@@ -44,8 +44,9 @@ export function NavbarDash() {
         router.push("/dashboard/profile")
     }
 
-    const handleLogoutClick = () => {
-        logout()
+    const handleLogoutClick = async () => {
+        await logout()
+        router.push("/auth/login")
     }
 
     return (

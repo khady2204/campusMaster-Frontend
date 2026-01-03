@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { apiClient } from "@/lib/api-client";
+import { apiClient } from "@/lib/api-client/api-client";
 import { User } from "@/services/auth.service";
 import { mapUserRole } from "@/lib/menu-config";
 import {

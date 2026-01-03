@@ -38,7 +38,7 @@ export const menuConfig = {
     navMain: [
       {
         title: "Tableau de bord",
-        url: "/dashboard", 
+        url: "/dashboard/admin", 
         icon: LayoutDashboard,
         isActive: true,
       },
@@ -107,7 +107,7 @@ export const menuConfig = {
     navMain: [
       {
         title: "Tableau de bord",
-        url: "/dashboard",
+        url: "/dashboard/enseignant",
         icon: LayoutDashboard,
         isActive: true,
       },
@@ -161,7 +161,7 @@ export const menuConfig = {
     navMain: [
       {
         title: "Tableau de bord",
-        url: "/dashboard",
+        url: "/dashboard/etudiant",
         icon: LayoutDashboard,
         isActive: true,
       },

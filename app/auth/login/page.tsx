@@ -18,15 +18,16 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Card, CardTitle } from "@/components/ui/card"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/core/contexts/authContext"
 import Image from "next/image"
 import imgLogin from "../../../public/images/img-login.png"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 // Schéma de validation avec Zod
 const loginSchema = z.object({
-    username: z.string().min(2, {
-        message: "Veuillez entrer un identifiant au moins 2 caractères .",
+    email: z.string().email({
+        message: "Veuillez entrer une adresse email valide.",
     }),
     password: z.string().min(6, {
         message: "Le mot de passe doit contenir au moins 6 caractères.",
@@ -41,12 +42,14 @@ export default function Login() {
     const { login } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
+    const router = useRouter()
+
 
     // Initialisation du formulaire avec react-hook-form et Zod
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema), // Intègre la validation Zod
         defaultValues: {
-            username: "",
+            email: "",
             password: "",
         },
     })
@@ -56,9 +59,30 @@ export default function Login() {
         setIsLoading(true)
         setError("")
         try {
-            await login(values);
+            const user = await login(values.email, values.password);
+            console.log("infos user", user.role);
+            if (user) {
+                switch (user.role) {
+                    case "ADMINISTRATEUR":
+                        router.push("/dashboard/admin");
+                        console.log("redirect dash admin");
+                        break;
+                    case "ENSEIGNANT":
+                        router.push("/dashboard");
+                        break;
+                    case "ETUDIANT":
+                        router.push("/dashboard");
+                        break;
+                    default:
+                        router.push("/dashboard");
+                        break;
+                }
+            }
+            
         } catch (e: any) {
             setError(e.message || "Une erreur est survenue lors de la connexion")
+        } finally {
+            // On arrête le chargement dans tous les cas (si la redirection marche, le composant sera démonté de toute façon)
             setIsLoading(false)
         }
     }
@@ -85,6 +109,7 @@ export default function Login() {
                                 alt="Login Image"
                                 width={700}
                                 height={500}
+                                loading="eager"
                             />
 
                             <div className="absolute bottom-5 left-5 text-white p-4 rounded-md">
@@ -116,14 +141,16 @@ export default function Login() {
                                     {/* Champ Email */}
                                     <FormField
                                         control={form.control}
-                                        name="username"
+                                        name="email"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-sm font-medium text-gray-600">Nom d'utilisateur</FormLabel>
+                                                <FormLabel className="text-sm font-medium text-gray-600">Adresse email</FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder="Votre nom d'utilisateur"
-                                                        type="text"
+                                                        placeholder="Votre adresse email"
+                                                        type="email"
+                                                        autoComplete="email"
+                                                        className="text-black"
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -143,6 +170,7 @@ export default function Login() {
                                                     <Input
                                                         placeholder="••••••"
                                                         type="password"
+                                                        className="text-black"
                                                         {...field}
                                                     />
                                                 </FormControl>

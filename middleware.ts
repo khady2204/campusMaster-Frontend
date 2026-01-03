@@ -4,13 +4,13 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
     
-    const token = request.cookies.get('auth_token')?.value
-    const isLoginPage = request.nextUrl.pathname === '/login'
+    const token = request.cookies.get('accessToken')?.value
+    const isLoginPage = request.nextUrl.pathname === '/auth/login'
     const isAuthPage = request.nextUrl.pathname.startsWith('/auth/')
 
     // Si l'utilisateur n'est pas connecté et essaie d'accéder à une page protégée
     if (!token && !isLoginPage && !isAuthPage) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
     return NextResponse.next()

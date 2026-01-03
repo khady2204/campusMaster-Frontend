@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { apiClient } from "@/lib/api-client";
+import { apiClient } from "@/lib/api-client/api-client";
 import { User } from "@/types/auth";
 import { mapUserRole } from "@/lib/menu-config";
 import {

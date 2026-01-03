@@ -16,7 +16,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { menuConfig, UserRole } from "@/lib/menu-config"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/core/hooks/useAuth"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   userRole: UserRole
