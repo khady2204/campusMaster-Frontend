@@ -15,8 +15,10 @@ import {
 export type UserRole = "Administrateur" | "Etudiant" | "Enseignant"
 
 export function mapUserRole(rawRole?: string | null): UserRole | null {
+  
   if (!rawRole) return null
   const role = rawRole.toLowerCase()
+  
   switch (role) {
     case "administrateur":
     case "admin":
@@ -31,6 +33,7 @@ export function mapUserRole(rawRole?: string | null): UserRole | null {
     default:
       return null
   }
+  
 }
 
 export const menuConfig = {

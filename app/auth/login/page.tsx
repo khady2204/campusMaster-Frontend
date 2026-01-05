@@ -68,10 +68,10 @@ export default function Login() {
                         console.log("redirect dash admin");
                         break;
                     case "ENSEIGNANT":
-                        router.push("/dashboard");
+                        router.push("/dashboard/enseignant");
                         break;
                     case "ETUDIANT":
-                        router.push("/dashboard");
+                        router.push("/dashboard/etudiant");
                         break;
                     default:
                         router.push("/dashboard");

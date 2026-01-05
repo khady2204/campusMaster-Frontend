@@ -1,6 +1,5 @@
 // Service de gestion de l'authentification
 
-import { apiClient } from "@/lib/api-client/api-client";
 import { loginApi, logoutApi, registerApi, meApi } from "../api/auth.api";
 import { Login, loginResponse, Register, registerResponse } from "../model/auth.model";
 import { User } from "../model/user.model";

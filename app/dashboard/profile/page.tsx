@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
 
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/core/contexts/authContext" 
 
 export default function ProfilePage() {
   const { user } = useAuth()
