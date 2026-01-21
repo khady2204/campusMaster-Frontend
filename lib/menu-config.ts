@@ -72,17 +72,7 @@ export const menuConfig = {
       {
         title: "Modules",
         url: "/dashboard/admin/modules",
-        icon: BookmarkIcon,
-        items: [
-          {
-            title: "Liste des modules",
-            url: "/dashboard/admin/modules",
-          },
-          {
-            title: "Créer un module",
-            url: "/dashboard/admin/modules/create",
-          },
-        ],
+        icon: BookmarkIcon
       },
       {
         title: "Cours",

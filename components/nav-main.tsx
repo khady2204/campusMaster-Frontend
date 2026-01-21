@@ -76,6 +76,7 @@ export function NavMain({
                     tooltip={item.title}
                     isActive={!!isItemActive}
                     onClick={() => router.push(item.url)}
+                    className=""
                   >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
@@ -90,10 +91,11 @@ export function NavMain({
                         pathname.startsWith(subItem.url)
 
                       return (
-                        <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubItem key={subItem.title} className="my-1">
                           <SidebarMenuSubButton
                             asChild
                             isActive={isSubItemActive}
+                            className="text-white"
                           >
                             <a href={subItem.url}>
                               <span>{subItem.title}</span>

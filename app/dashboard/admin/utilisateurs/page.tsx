@@ -10,8 +10,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { apiClient } from "@/lib/api-client/api-client";
-import { User } from "@/types/auth";
 import { mapUserRole } from "@/lib/menu-config";
 import {
   ChartContainer,
@@ -31,6 +29,7 @@ import {
   PieChart,
   Cell,
 } from "recharts";
+import { getusersApi } from "@/core/api/user.api";
 
 // Structure des statistiques calculées à partir de la liste des utilisateurs
 type UserStats = {
@@ -80,7 +79,7 @@ const statusChartConfig: ChartConfig = {
 };
 
 export default function Utilisateurs() {
-  
+
   // Contient les statistiques calculées
   const [stats, setStats] = useState<UserStats>(initialStats);
   // Indique si on est en cours de chargement
@@ -129,7 +128,7 @@ export default function Utilisateurs() {
         setError(null);
 
         // Appel GET /api/users via apiClient
-        const users = await apiClient.get<User[]>("/users");
+        const users = await getusersApi();
 
         // On repart de zéro pour recalculer les compteurs
         const nextStats: UserStats = { ...initialStats };
@@ -148,7 +147,7 @@ export default function Utilisateurs() {
           }
 
           // Comptage des comptes actifs / inactifs
-          if (user.active) {
+          if (user.isActive) {
             nextStats.actifs += 1;
           } else {
             nextStats.inactifs += 1;
@@ -175,7 +174,7 @@ export default function Utilisateurs() {
 
   return (
     <div className="space-y-4">
-      
+
       {/* Indicateur de chargement */}
       {loading && (
         <p className="text-sm text-muted-foreground">
@@ -192,9 +191,9 @@ export default function Utilisateurs() {
 
       {/* Répartition par rôle avec liens vers les pages détaillées */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="p-3">
+        <Card className="bg-transparent dark:bg-[#090C13]/10 p-3">
           <CardHeader className="p-0 mb-0">
-            <CardTitle className="text-base">Utilisateurs</CardTitle>
+            <CardTitle className="text-[#0A3282] dark:text-gray-100">Utilisateurs</CardTitle>
             <CardDescription className="text-xs">
               Tous les comptes créés sur CampusMaster.
             </CardDescription>
@@ -204,9 +203,9 @@ export default function Utilisateurs() {
           </CardContent>
         </Card>
 
-        <Card className="p-3">
+        <Card className="bg-transparent dark:bg-[#090C13]/10 p-3">
           <CardHeader className="p-0 mb-0">
-            <CardTitle className="text-base">Étudiants</CardTitle>
+            <CardTitle className="text-[#0A3282] dark:text-gray-100">Étudiants</CardTitle>
             <CardDescription className="text-xs">
               Nombre total d&apos;étudiants inscrits.
             </CardDescription>
@@ -214,14 +213,14 @@ export default function Utilisateurs() {
           <CardContent className="flex items-center justify-between p-0">
             <p className="text-2xl font-semibold">{stats.etudiants}</p>
             <Link href="/dashboard/admin/utilisateurs/etudiants">
-              <Button size="sm">Voir</Button>
+              <Button size="sm" className="bg-[#0A3282] dark:bg-white">Voir</Button>
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="p-3">
+        <Card className="bg-transparent dark:bg-[#090C13]/10 p-3">
           <CardHeader className="p-0 mb-0">
-            <CardTitle className="text-base">Enseignants</CardTitle>
+            <CardTitle className="text-[#0A3282] dark:text-gray-100">Enseignants</CardTitle>
             <CardDescription className="text-xs">
               Nombre total d&apos;enseignants.
             </CardDescription>
@@ -229,14 +228,14 @@ export default function Utilisateurs() {
           <CardContent className="flex items-center justify-between p-0">
             <p className="text-2xl font-semibold">{stats.enseignants}</p>
             <Link href="/dashboard/admin/utilisateurs/enseignants">
-              <Button size="sm">Voir</Button>
+              <Button size="sm" className="bg-[#0A3282] dark:bg-white">Voir</Button>
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="p-3">
+        <Card className="bg-transparent dark:bg-[#090C13]/10 p-3">
           <CardHeader className="p-0 mb-0">
-            <CardTitle className="text-base">Administrateurs</CardTitle>
+            <CardTitle className="text-[#0A3282] dark:text-gray-100">Administrateurs</CardTitle>
             <CardDescription className="text-xs">
               Nombre total d&apos;administrateurs.
             </CardDescription>
@@ -246,7 +245,7 @@ export default function Utilisateurs() {
               {stats.administrateurs}
             </p>
             <Link href="/dashboard/admin/utilisateurs/admins">
-              <Button size="sm">Voir</Button>
+              <Button size="sm" className="bg-[#0A3282] dark:bg-white">Voir</Button>
             </Link>
           </CardContent>
         </Card>
@@ -255,47 +254,11 @@ export default function Utilisateurs() {
       {/* Affichage des cartes uniquement si pas de chargement ni d'erreur */}
       {!loading && !error && (
         <>
-          {/* Statistiques globales */}
-          {/* <div className="grid gap-4 md:grid-cols-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Total utilisateurs</CardTitle>
-                <CardDescription>
-                  Tous les comptes créés sur CampusMaster.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-semibold">{stats.total}</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Actifs</CardTitle>
-                <CardDescription>Comptes actuellement actifs.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-semibold">{stats.actifs}</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Inactifs</CardTitle>
-                <CardDescription>
-                  Comptes désactivés ou inactifs.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-semibold">{stats.inactifs}</p>
-              </CardContent>
-            </Card>
-          </div> */}
 
           <div className="grid gap-x-4 md:grid-cols-2">
-            <Card>
+            <Card className="bg-transparent dark:bg-[#090C13]/10">
               <CardHeader className="pb-0">
-                <CardTitle>Répartition par rôle</CardTitle>
+                <CardTitle className="text-[#0A3282] dark:text-gray-100">Répartition par rôle</CardTitle>
                 <CardDescription>
                   Nombre d&apos;utilisateurs par type de profil.
                 </CardDescription>
@@ -303,7 +266,7 @@ export default function Utilisateurs() {
               <CardContent>
                 <ChartContainer config={roleChartConfig} className="p-0">
                   <BarChart data={roleData} className="w-full">
-                    <CartesianGrid vertical={false} strokeDasharray="3 3" className="p-0"/>
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" className="p-0" />
                     <XAxis dataKey="role" tickLine={false} axisLine={false} padding={{ right: 0 }} />
                     <YAxis allowDecimals={false} />
                     <ChartTooltip
@@ -323,7 +286,8 @@ export default function Utilisateurs() {
                       {roleData.map((entry) => (
                         <Cell
                           key={entry.roleKey}
-                          fill={`var(--color-${entry.roleKey})`}
+                          // fill={`var(--color-${entry.roleKey})`}
+                          fill="#0A3282"
                         />
                       ))}
                     </Bar>
@@ -332,14 +296,14 @@ export default function Utilisateurs() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-transparent dark:bg-[#090C13]/10">
               <CardHeader>
-                <CardTitle>Actifs vs inactifs</CardTitle>
+                <CardTitle className="text-[#0A3282] dark:text-gray-100">Actifs vs inactifs</CardTitle>
                 <CardDescription>État des comptes utilisateurs.</CardDescription>
               </CardHeader>
               <CardContent>
                 <ChartContainer config={statusChartConfig}>
-                  <PieChart>
+                  <PieChart className="">
                     <ChartTooltip
                       cursor={{ fill: "transparent" }}
                       content={
@@ -361,11 +325,12 @@ export default function Utilisateurs() {
                       outerRadius={100}
                       paddingAngle={4}
                       strokeWidth={0}
+                      fill="#0A3282"
                     >
                       {statusData.map((entry) => (
                         <Cell
                           key={entry.statusKey}
-                          fill={`var(--color-${entry.statusKey})`}
+                          fill="#0A3282"
                         />
                       ))}
                     </Pie>
@@ -375,7 +340,7 @@ export default function Utilisateurs() {
             </Card>
           </div>
 
-          
+
         </>
       )}
     </div>

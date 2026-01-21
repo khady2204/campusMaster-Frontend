@@ -35,7 +35,7 @@ export default function DashboardLayout({
     <SidebarProvider>
       <AppSidebar userRole={userRole} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 justify-between border-b px-4">
+        <header className="flex h-16 shrink-0 items-center gap-2 justify-between border-b px-4 dark:bg-[#090C13]">
           {/* Gauche */}
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
@@ -45,7 +45,7 @@ export default function DashboardLayout({
           <NavbarDash />
         </header>
 
-        <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="flex flex-1 flex-col gap-4 p-4 bg-white dark:bg-[#090C13]">
           {children}
         </div>
 

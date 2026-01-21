@@ -50,8 +50,9 @@ export function NavbarDash() {
     }
 
     return (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center sticky top-0 z-50">
             <ModeToggle />
+            
             {/* Bouton Notifications */}
             <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
@@ -83,9 +84,6 @@ export function NavbarDash() {
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         Paramètres
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        Facturation
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-red-600" onClick={handleLogoutClick}>
