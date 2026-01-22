@@ -2,7 +2,8 @@
 
 import React, { createContext, useEffect, useState, useContext } from 'react'
 import { authService } from '@/core/services/auth.service'
-import { User } from '@/core/model/user.model'
+import { User } from '@/core/model/user/user.model'
+import { Loader2 } from 'lucide-react'
 
 // Définition de la forme du contexte
 interface AuthContextType {
@@ -18,7 +19,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // Provider simple
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const init = async () => {
@@ -59,7 +60,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logout,
   }
 
-  if (loading) return <div>Loading...</div>
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-40 w-40 animate-spin text-muted-foreground" />
+      </div>
+
+    )
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

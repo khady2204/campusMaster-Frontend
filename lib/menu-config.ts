@@ -65,34 +65,19 @@ export const menuConfig = {
         ],
       },
       {
+        title: "Semestres",
+        url: "/dashboard/admin/semestres",
+        icon: Calendar
+      },
+      {
         title: "Modules",
         url: "/dashboard/admin/modules",
-        icon: BookmarkIcon,
-        items: [
-          {
-            title: "Liste des modules",
-            url: "/dashboard/admin/modules",
-          },
-          {
-            title: "Créer un module",
-            url: "/dashboard/admin/modules/create",
-          },
-        ],
+        icon: BookmarkIcon
       },
       {
         title: "Cours",
         url: "/dashboard/admin/cours",
-        icon: BookOpen,
-        items: [
-          {
-            title: "Liste des cours",
-            url: "/dashboard/admin/cours",
-          },
-          {
-            title: "Créer un cours",
-            url: "/dashboard/admin/cours/create",
-          },
-        ],
+        icon: BookOpen
       },
       {
         title: "Statistiques",

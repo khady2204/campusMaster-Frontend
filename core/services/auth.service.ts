@@ -1,8 +1,8 @@
 // Service de gestion de l'authentification
 
 import { loginApi, logoutApi, registerApi, meApi } from "../api/auth.api";
-import { Login, loginResponse, Register, registerResponse } from "../model/auth.model";
-import { User } from "../model/user.model";
+import { Login, loginResponse, Register, registerResponse } from "../../core/model/auth/auth.model";
+import { User } from "../model/user/user.model";
 
 class AuthService {
     
