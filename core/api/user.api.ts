@@ -1,11 +1,12 @@
 import { apiClient } from "@/lib/api-client/api-client";
 import { User } from "../model/user/user.model";
+import { PagedResponse } from "../model/user/pageResponse.model";
 
 const USERS_ENDPOINT = '/api/users';
 
 // GET - /users
-export const getusersApi = async (): Promise<User[]> => {
-  return apiClient.get<User[]>(USERS_ENDPOINT)
+export const getusersApi = async (): Promise<PagedResponse<User>> => {
+  return apiClient.get<PagedResponse<User>>(USERS_ENDPOINT)
 }
 
 // GET - /users/:id

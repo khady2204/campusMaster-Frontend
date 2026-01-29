@@ -1,17 +1,19 @@
 import { User } from "../user/user.model";
 import { Module } from "./module";
+import { Semestre } from "./semestre";
 import { Support } from "./support";
 
 export interface Cours {
-    id: string;
-    titre: string;
+    id?: string;
+    titreCours: string;
     contenuTextuel: string;
+    description: string;
     ordre: number;
+    typeCours: string;
     moduleId: string;
-    module: Module;
-    enseigantId: User;
-    enseignant: User;
-    supports: Support[];
+    module?: Module;
+    semestreId: string;
+    semestre?: Semestre;
     createdAt: Date;
     updatedAt: Date;
 }

@@ -37,7 +37,7 @@ export default function DetailsCoursPage() {
         <div className="space-y-8">
             <div className="py-4 bg-light/50 dark:bg-dark/50 border rounded-md px-4 shadow space-y-4 flex justify-between items-center">
                 <div className="space-y-2">
-                    <h1 className="text-2xl font-semibold">{cours.titre}</h1>
+                    <h1 className="text-2xl font-semibold">{cours.titreCours}</h1>
                     <p className="text-sm text-muted-foreground">
                         Détails du cours
                     </p>
@@ -45,7 +45,7 @@ export default function DetailsCoursPage() {
                 <div className="">
                     <Image
                         src={ImgBl1}
-                        alt={cours.titre}
+                        alt={cours.titreCours}
                         width={800}
                         height={400}
                         className="w-full h-30 object-cover rounded-md"
@@ -67,7 +67,7 @@ export default function DetailsCoursPage() {
                     </div>
                     <div>
                         <p className="font-semibold">Titre</p>
-                        <p>{cours.titre}</p>
+                        <p>{cours.titreCours}</p>
                     </div>
                     <div>
                         <p className="font-semibold">Contenu</p>
@@ -81,29 +81,29 @@ export default function DetailsCoursPage() {
                 <TabsContent value="module">
                     <div>
                         <p className="font-semibold">Module</p>
-                        <p>{cours.module.titre}</p>
+                        <p>{cours.module?.titreModule}</p>
                     </div>
                     <div>
                         <p className="font-semibold">Description</p>
-                        <p>{cours.module.description}</p>
+                        <p>{cours.module?.description}</p>
                     </div>
                 </TabsContent>
                 <TabsContent value="enseignant">
                     <div>
                         <p className="font-semibold">Enseignant</p>
-                        <p>{cours.enseignant.username}</p>
+                        <p>{cours.module?.responsable?.username}</p>
                     </div>
                     <div>
                         <p className="font-semibold">Email</p>
-                        <p>{cours.enseignant.email}</p>
+                        <p>{cours.module?.responsable?.email}</p>
                     </div>
                     <div>
                         <p className="font-semibold">Role</p>
-                        <p>{cours.enseignant.role}</p>
+                        <p>{cours.module?.responsable?.role}</p>
                     </div>
                 </TabsContent>
                 <TabsContent value="supports">
-                    <div className="space-y-4">
+                    {/* <div className="space-y-4">
                         {cours.supports && cours.supports.length > 0 ? (
                             cours.supports.map((support) => (
                                 <div key={support.id}>
@@ -114,7 +114,7 @@ export default function DetailsCoursPage() {
                         ) : (
                             <p>Aucun support disponible.</p>
                         )}
-                    </div>
+                    </div> */}
                 </TabsContent>
             </Tabs>
 
