@@ -1,6 +1,6 @@
 "use client"
 import { DataTable } from "./data-table";
-import { columns } from "./columns";
+import { createColumns } from "./columns";
 import { userService } from "@/core/services/user.service";
 import { User } from "@/core/model/user/user.model";
 import { useEffect, useState } from "react";
@@ -9,34 +9,45 @@ import { mapUserRole } from "@/lib/menu-config";
 export default function EnseignantsPage() {
   
   const [Listusers, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+   // 
+  const fetchUsers = async () => {
+    setIsLoading(true)
+    try {
+      const users = await userService.getUsers()
+
+      const enseignantsOnly = users.filter(
+        user => mapUserRole(user.role) === "Enseignant"
+      )
+
+      setUsers(enseignantsOnly)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const users = await userService.getUsers();
-        setUsers(users);
-        // On ne conserve que les profils ayant le rôle "Enseignant"
-        const enseignantsOnly = users.filter(
-          (user) => mapUserRole(user.role) === "Enseignant"
-        );
-        setUsers(enseignantsOnly);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-    fetchUsers();
-  }, []);
+    (async () => {
+      await fetchUsers()
+    })()
+  }, [])
 
+  const columns = createColumns(fetchUsers);
 
   return (
     <div className="container mx-auto space-y-8">
       <div>
         <h1 className="text-2xl font-semibold text-[#0A3282]/80">Liste des enseignants de la plateforme</h1>
         <p className="text-sm text-muted-foreground">
-          Gestion des enseignants de la plateforme.
+          Gestion des énseignants de la plateforme.
         </p>
       </div>
-      <DataTable columns={columns} data={Listusers} />
+
+      <DataTable columns={columns} data={Listusers} onRefresh={fetchUsers} isLoading={isLoading} />
     </div>
   )
 

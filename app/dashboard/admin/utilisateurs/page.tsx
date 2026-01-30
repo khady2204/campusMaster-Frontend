@@ -29,7 +29,7 @@ import {
   PieChart,
   Cell,
 } from "recharts";
-import { getusersApi } from "@/core/api/user.api";
+import { userService } from "@/core/services/user.service";
 
 // Structure des statistiques calculées à partir de la liste des utilisateurs
 type UserStats = {
@@ -128,7 +128,7 @@ export default function Utilisateurs() {
         setError(null);
 
         // Appel GET /api/users via apiClient
-        const users = await getusersApi();
+        const users = await userService.getUsers();
 
         // On repart de zéro pour recalculer les compteurs
         const nextStats: UserStats = { ...initialStats };
@@ -147,7 +147,7 @@ export default function Utilisateurs() {
           }
 
           // Comptage des comptes actifs / inactifs
-          if (user.isActive) {
+          if (user.active) {
             nextStats.actifs += 1;
           } else {
             nextStats.inactifs += 1;

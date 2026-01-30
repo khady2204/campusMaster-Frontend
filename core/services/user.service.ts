@@ -10,7 +10,7 @@ class UserService {
     async getUsers(): Promise<User[]> {
         try {
             const response = await getusersApi();
-            return response;
+            return response.content;
         } catch (error) {
             throw error;
         }

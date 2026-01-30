@@ -2,12 +2,14 @@ import { User } from "../user/user.model";
 import { Semestre } from "./semestre";
 
 export interface Module{
-    id: string;
-    code: string;
-    titre: string;
+    id?: string;
+    codeModule: string;
+    titreModule: string;
     description: string;
-    adminId: User;
-    semestreId: Semestre;
+    createdBy: string;
+    updatedBy: string;
+    responsable?: User;
+    createur?: User;
     createdAt: Date;
     updatedAt: Date;
 }
