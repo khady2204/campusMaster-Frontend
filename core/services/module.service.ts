@@ -7,12 +7,21 @@ import { Module } from "../model/cours/module";
 class ModuleService {
 
     // recuperer la liste des modules
-    async getAllModules(): Promise<Module[]> {
+    /*async getAllModules(): Promise<Module[]> {
         try {
             const response = await getModulesApi();
             return response;
         } catch (error) {
             throw error;
+        }
+    }  */
+
+    async getAllModules(enseignantId?: string): Promise<Module[]> {
+        try {
+        const response = await getModulesApi(enseignantId);
+        return response;
+        } catch (error) {
+        throw error;
         }
     }
 

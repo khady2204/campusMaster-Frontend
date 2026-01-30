@@ -3,9 +3,15 @@ import { Module } from '../model/cours/module';
 
 const Modules_ENDPOINT = '/cours-service/api/modules';
 
-// GET - /modules
+/* GET - /modules
 export const getModulesApi = async (): Promise<Module[]> => {
   return apiClient.get<Module[]>(Modules_ENDPOINT)
+}*/
+
+// GET - /modules ou /modules?enseignantId=123
+export const getModulesApi = async (enseignantId?: string): Promise<Module[]> => {
+  const url = enseignantId ? `${Modules_ENDPOINT}?enseignantId=${enseignantId}` : Modules_ENDPOINT;
+  return apiClient.get<Module[]>(url);
 }
 
 // GET - /modules/:id

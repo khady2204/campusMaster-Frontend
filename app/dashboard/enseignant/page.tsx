@@ -1,79 +1,86 @@
+"use client"
 import { QuickAction } from "@/components/enseignant/quick-action"
 import { CourseCard } from "@/components/enseignant/course-card"
 import { Badge } from "@/components/ui/badge"
 import { CorrectionsEnAttente } from "@/components/enseignant/correctionenattente";
 import { PlusIcon } from "@heroicons/react/16/solid";
-import { SpeakerWaveIcon } from "@heroicons/react/20/solid";
+import { Database, Megaphone, Package, UserPlus } from "lucide-react";
+import { useState } from "react";
+import { AddCourseModal } from "@/components/enseignant/add-course-modal"
+import { AnnonceModal } from "@/components/enseignant/annonce-modal"
+import { DevoirModal } from "@/components/enseignant/devoir-modal"
 
 
 export default function page() {
+  const [openCourse, setOpenCourse] = useState(false)
+  const [openAnnonce, setOpenAnnonce] = useState(false)
+  const [openDevoir, setOpenDevoir] = useState(false)
   return (
     <main className="flex-1 p-6 bg-background">
-      
-      {/* CONTENU PRINCIPAL */}
       <div className="space-y-8">
-
         {/* ACTIONS RAPIDES */}
         <div>
           <h2 className="mb-3 text-lg font-semibold">Actions Rapides</h2>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 ">
             <QuickAction title="Créer un devoir" 
             description="Configurer une nouvelle tâche" 
-            Icon={PlusIcon}/>
+            Icon={PlusIcon}
+            onClick={() => setOpenDevoir(true)}
+            />
             <QuickAction title="Faire une annonce" 
             description="Notifier tous les étudiants"
-            Icon={SpeakerWaveIcon}/>
+            Icon={Megaphone}
+            onClick={() => setOpenAnnonce(true)}/>
             <QuickAction title="Ajouter un cours"
             description="Notifier tous les étudiants"
-            Icon={PlusIcon} />
-          </div>
-        </div>
-
-        {/*  ZONE 2 COLONNES : CONTENU + SIDEBAR */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-
-          {/* COLONNE GAUCHE (2/3) */}
-          <div className="lg:col-span-2 space-y-8">
-
-            {/* COURS ACTIFS */}
-            <div>
-              <h2 className="mb-3 text-lg font-semibold">Cours Actifs</h2>
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <CourseCard
-                  title="Algorithmes Avancés"
-                  students={32}
-                  average="14.5 / 20"
-                />
-                <CourseCard
-                  title="Architecture Logicielle"
-                  students={45}
-                  average="13.2 / 20"
-                />
-                <CourseCard
-                  title="Architecture Logicielle"
-                  students={45}
-                  average="13.2 / 20"
-                />
-              </div>
-            </div>
-
-            {/* CORRECTIONS  */}
-            <div>
-              <div>
-              <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold justify-between">
-                Corrections en attente
-                <Badge variant="destructive">Priorité Haute</Badge>
-              </h2></div>
-
-              <CorrectionsEnAttente />
-            </div>
+            Icon={PlusIcon} 
+            onClick={() => setOpenCourse(true)}/>
+            
           </div>
 
+             {/* MODALS */}
+            <AddCourseModal open={openCourse} onOpenChange={setOpenCourse} />
+            <AnnonceModal open={openAnnonce} onOpenChange={setOpenAnnonce} />
+            <DevoirModal open={openDevoir} onOpenChange={setOpenDevoir} />
 
         </div>
+        
+        <div className="">
+                <div className="grid md:grid-cols-12 lg:grid-cols-12 gap-4">
+                  <CorrectionsEnAttente />
+
+                  <div className="card h-96 shadow border rounded-2xl col-span-4 p-5 space-y-5">
+                    <h2 className="font-semibold">Cours actifs</h2>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
+                      <CourseCard
+                        title="Projet Opérationnel"
+                        description=""
+                        image="/images/cours-banner.jpg"
+                      />
+                      <CourseCard
+                        title="Tech Web"
+                        description=""
+                        image="/images/cours-banner.jpg"
+                      />
+                      <CourseCard
+                        title="Algo Avancée"
+                        description=""
+                        image="/images/cours-banner.jpg"
+                      />
+                      <CourseCard
+                        title="Base de données"
+                        description=""
+                        image="/images/cours-banner.jpg"
+                      />
+                    </div>
+                  </div>
+                </div>
+            </div>
+
       </div>
     </main>
+    
   );
+
 }

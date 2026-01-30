@@ -40,9 +40,9 @@ const corrections: Correction[] = [
 
 export function CorrectionsEnAttente() {
   return (
-    <Card>
-
-      <CardContent className="p-0">
+    <Card className="card h-96 shadow border rounded-2xl col-span-8">
+       <CardTitle className="font-semibold ">Corrections</CardTitle>
+      <CardContent className="p-0 p-0">
         <table className="w-full text-sm">
           <thead className="border-b text-muted-foreground">
             <tr>
@@ -113,7 +113,7 @@ export function CorrectionsEnAttente() {
         </table>
 
         <div className="p-4 text-center text-sm text-muted-foreground hover:underline cursor-pointer">
-          Voir les 12 éléments en attente
+          Voir plus
         </div>
       </CardContent>
     </Card>
