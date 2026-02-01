@@ -107,7 +107,7 @@ export const menuConfig = {
       },
       {
         title: "Mes cours",
-        url: "/dashboard/cours",
+        url: "/dashboard/enseignant/cours",
         icon: BookOpen,
         
       },

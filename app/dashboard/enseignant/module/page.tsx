@@ -25,7 +25,7 @@ export default function EnseignantModules() {
         console.error(err);
         setError("Impossible de récupérer les modules");
       } finally {
-        setLoading(false);
+        setLoading(false); 
       }
     };
 
@@ -55,13 +55,13 @@ export default function EnseignantModules() {
             <div className="relative w-full h-40">
               <Image
                 src={ImageModuleBanner}
-                alt={module.titre}
+                alt={module.titreModule}
                 fill
                 className="object-cover"
               />
             </div>
             <div className="p-4 space-y-2">
-              <h2 className="text-lg font-semibold">{module.titre}</h2>
+              <h2 className="text-lg font-semibold">{module.titreModule}</h2>
               <p className="text-sm text-muted-foreground line-clamp-3">
                 {module.description}
               </p>
@@ -71,4 +71,4 @@ export default function EnseignantModules() {
       </div>
     </div>
   );
-}
+} 
