@@ -45,7 +45,7 @@ export function AddCourseModal({
               </span>
               <Input
                 type="text"
-                name="titre"
+                name="titreCours"
                 required
                 placeholder="Ex: Introduction à JavaScript"
                 disabled={isSubmitting}

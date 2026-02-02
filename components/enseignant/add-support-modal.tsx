@@ -95,9 +95,14 @@ export function AddSupportModal({ open, onOpenChange, cours, isSubmitting, handl
 
           <div className="flex justify-end gap-2 mt-4">
             <DialogClose asChild>
-              <Button variant="outline" disabled={isSubmitting}>Annuler</Button>
+              <Button variant="outline"
+                type="button"
+                size="sm" disabled={isSubmitting}>Annuler</Button>
             </DialogClose>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" 
+              size="sm"
+              className="bg-[#0A3282] text-white hover:bg-[#0A3282]/80"
+              disabled={isSubmitting}>
               {isSubmitting ? "Ajout en cours..." : "Ajouter"}
             </Button>
           </div>
