@@ -1,6 +1,7 @@
 // Service de gestion des users
 
-import { createUserApi, deleteUserApi, getUserByIdApi, getusersApi, updateUserApi } from "../api/user.api";
+import { createUserApi, deleteUserApi, getUserByIdApi, getusersApi, getAllusersApi, updateUserApi, getUsersByRoleApi } from "../api/user.api";
+import { PagedResponse } from "../model/user/pageResponse.model";
 import { User } from "../model/user/user.model";
 
 
@@ -14,6 +15,29 @@ class UserService {
         } catch (error) {
             throw error;
         }
+    }
+
+    // recuperer la liste des users
+    async getAllUsers(): Promise<User[]> {
+        try {
+            const response = await getAllusersApi();
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // recuperer la liste des users par role
+    async getAllUsersByRole(
+        role: string,
+        page: number = 0,
+        size: number = 10
+    ): Promise<PagedResponse<User>> {
+    try {
+        return await getUsersByRoleApi(role, page, size);
+    } catch (error) {
+        throw error;
+    }
     }
 
     // Récupérer un user par son ID

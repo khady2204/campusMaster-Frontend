@@ -49,8 +49,8 @@ function EditDialog({ etudiant, onSuccess }: { etudiant: User; onSuccess: () => 
       role: etudiant.role,
       createdAt: etudiant.createdAt,
       updatedAt: new Date(),
-      emailVerified: etudiant.emailVerified,
-      active: etudiant.active,
+      is_emailVerified: etudiant.is_emailVerified,
+      is_active: etudiant.is_active,
       lastLoginAt: etudiant.lastLoginAt
     };
 
@@ -245,8 +245,8 @@ export const createColumns = (onRefresh: () => void): ColumnDef<User>[] => [
         cell: ({ row }) => {
             const etudiant = row.original
             return (
-                <span className={etudiant.active ? "text-green-500 font-medium" : "text-red-500"}>
-                    {etudiant.active ? "Actif" : "Inactif"}
+                <span className={etudiant.is_active ? "text-green-500 font-medium" : "text-red-500"}>
+                    {etudiant.is_active ? "Actif" : "Inactif"}
                 </span>
             )
         },

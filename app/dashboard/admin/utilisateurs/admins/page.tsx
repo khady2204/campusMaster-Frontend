@@ -1,31 +1,34 @@
 "use client"
 import { DataTable } from "./data-table";
-import { columns } from "./columns";
+import { createColumns } from "./columns";
 import { userService } from "@/core/services/user.service";
 import { User } from "@/core/model/user/user.model";
 import { useEffect, useState } from "react";
-import { mapUserRole } from "@/lib/menu-config";
+import { PagedResponse } from "@/core/model/user/pageResponse.model";
 
 export default function AdminsPage() {
   
-  const [Listusers, setUsers] = useState<User[]>([]);
-
-  useEffect(() => {
+  const [data, setData] = useState<PagedResponse<User> | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [pageIndex, setPageIndex] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+  
+     // 
     const fetchUsers = async () => {
+      setIsLoading(true);
       try {
-        const users = await userService.getUsers();
-        setUsers(users);
-        // On ne conserve que les profils ayant le rôle "Administrateur"
-        const adminsOnly = users.filter(
-          (user) => mapUserRole(user.role) === "Administrateur"
-        );
-        setUsers(adminsOnly);
+        const response = await userService.getAllUsersByRole("Administrateur", pageIndex, pageSize);
+        setData(response);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchUsers();
-  }, []);
+  
+    useEffect(() => {
+      fetchUsers();
+    }, [pageIndex, pageSize]);
 
 
   return (
@@ -36,7 +39,15 @@ export default function AdminsPage() {
           Gestion des administrateurs de la plateforme.
         </p>
       </div>
-      <DataTable columns={columns} data={Listusers} />
+      <DataTable  
+        columns={createColumns(fetchUsers)}
+        data={data?.content ?? []}
+        onRefresh={fetchUsers}
+        isLoading={isLoading}
+        pageIndex={pageIndex}
+        setPageIndex={setPageIndex}
+        totalPages={data?.totalPages ?? 0}
+      />
     </div>
   )
 

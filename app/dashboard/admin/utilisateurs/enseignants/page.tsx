@@ -4,39 +4,34 @@ import { createColumns } from "./columns";
 import { userService } from "@/core/services/user.service";
 import { User } from "@/core/model/user/user.model";
 import { useEffect, useState } from "react";
-import { mapUserRole } from "@/lib/menu-config";
+import { PagedResponse } from "@/core/model/user/pageResponse.model";
 
 export default function EnseignantsPage() {
   
-  const [Listusers, setUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-   // 
-  const fetchUsers = async () => {
-    setIsLoading(true)
-    try {
-      const users = await userService.getUsers()
-
-      const enseignantsOnly = users.filter(
-        user => mapUserRole(user.role) === "Enseignant"
-      )
-
-      setUsers(enseignantsOnly)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // 
-  useEffect(() => {
-    (async () => {
-      await fetchUsers()
-    })()
-  }, [])
-
-  const columns = createColumns(fetchUsers);
+  const [data, setData] = useState<PagedResponse<User> | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [pageIndex, setPageIndex] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+  
+     // 
+    const fetchUsers = async () => {
+      setIsLoading(true);
+      try {
+        const response = await userService.getAllUsersByRole("Enseignant", pageIndex, pageSize);
+        setData(response);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      fetchUsers();
+    }, [pageIndex, pageSize]);
+  
+  
+    const columns = createColumns(fetchUsers);
 
   return (
     <div className="container mx-auto space-y-8">
@@ -47,7 +42,15 @@ export default function EnseignantsPage() {
         </p>
       </div>
 
-      <DataTable columns={columns} data={Listusers} onRefresh={fetchUsers} isLoading={isLoading} />
+      <DataTable
+        columns={columns}
+        data={data?.content ?? []}
+        onRefresh={fetchUsers}
+        isLoading={isLoading}
+        pageIndex={pageIndex}
+        setPageIndex={setPageIndex}
+        totalPages={data?.totalPages ?? 0}
+      />
     </div>
   )
 

@@ -43,7 +43,7 @@ function EditDialog({ semestre, onSuccess }: { semestre: Semestre; onSuccess: ()
       nom: formData.get("nom") as string,
       createdAt: semestre.createdAt,
       updatedAt: new Date(),
-      adminId: semestre.adminId,
+      annee: semestre.annee,
     };
 
     try {
@@ -176,6 +176,11 @@ export const createColumns = (onRefresh: () => void): ColumnDef<Semestre>[] => [
         accessorKey: "createdAt",
         header: "Créé le",
         cell: ({ row }) => formatDate(row.original.createdAt),
+    },
+    {
+        accessorKey: "annee",
+        header: "Année",
+        cell: ({ row }) => formatDate(row.original.annee),
     },
     {
         accessorKey: "updatedAt",

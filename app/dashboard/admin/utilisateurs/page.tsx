@@ -128,7 +128,7 @@ export default function Utilisateurs() {
         setError(null);
 
         // Appel GET /api/users via apiClient
-        const users = await userService.getUsers();
+        const users = await userService.getAllUsers();
 
         // On repart de zéro pour recalculer les compteurs
         const nextStats: UserStats = { ...initialStats };
@@ -147,7 +147,7 @@ export default function Utilisateurs() {
           }
 
           // Comptage des comptes actifs / inactifs
-          if (user.active) {
+          if (user.is_active) {
             nextStats.actifs += 1;
           } else {
             nextStats.inactifs += 1;

@@ -9,6 +9,22 @@ export const getusersApi = async (): Promise<PagedResponse<User>> => {
   return apiClient.get<PagedResponse<User>>(USERS_ENDPOINT)
 }
 
+// GET - /users/role/:role?page={page}&size={size}
+export const getUsersByRoleApi = async (
+  role: string,
+  page: number = 0,
+  size: number = 10
+): Promise<PagedResponse<User>> => {
+  return apiClient.get<PagedResponse<User>>(
+    `${USERS_ENDPOINT}/role/${role}?page=${page}&size=${size}`
+  );
+};
+
+// GET - /users/all
+export const getAllusersApi = async (): Promise<User[]> => {
+  return apiClient.get<User[]>(`${USERS_ENDPOINT}/all`)
+}
+
 // GET - /users/:id
 export const getUserByIdApi = async (id: string): Promise<User> => {
   return apiClient.get<User>(`${USERS_ENDPOINT}/${id}`)

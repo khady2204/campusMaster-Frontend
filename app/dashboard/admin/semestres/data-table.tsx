@@ -30,6 +30,16 @@ import { cn } from "@/lib/utils"
 import { showToast } from "@/core/services/toast.service"
 import { semestreService } from "@/core/services/semestre.service"
 import { Semestre } from "@/core/model/cours/semestre"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -81,9 +91,9 @@ export function DataTable<TData, TValue>({
     
     const newSemestre: Semestre = {
       nom: formData.get("nom") as string,
-      adminId: formData.get("adminId") as string,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      description: formData.get("description") as string,
+      annee: formData.get("annee") as string,
+      createdBy: formData.get("createdBy") as string,
     }
 
     
@@ -151,18 +161,58 @@ export function DataTable<TData, TValue>({
               </DialogDescription>
             </DialogHeader>
             
-            <form ref={formRef} onSubmit={handleAddSemestre}>
+            <form ref={formRef} onSubmit={handleAddSemestre} className="space-y-4">
               <div className="">
                 <label className="block">
-                  <span className="block text-sm font-medium mb-2">Nom</span>
+                  <span className="block text-sm font-medium mb-2">Nom du semestre</span>
                   <Input
                     type="text"
                     name="nom"
                     required
-                    placeholder="Ex: Doe"
+                    placeholder="Ex: Semestre 1"
                     disabled={isSubmitting}
                   />
                 </label>
+              </div>
+
+              <div className="">
+                <label className="block">
+                  <span className="block text-sm font-medium mb-2">Description du semeste</span>
+                  <Textarea
+                    name="description"
+                    rows={4}
+                    required
+                    placeholder="Ex: Description du semestre 1"
+                    disabled={isSubmitting}
+                  />
+                </label>
+              </div>
+
+              <div className="space-x-3 w-full">
+                <label className="block text-sm font-medium mb-2">Année</label>
+                <Select
+                  name="annee"
+                  required
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Ex: 2026" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Année</SelectLabel>
+                      {[...Array(5)].map((_, yearIndex) => {
+                        const year = new Date().getFullYear() - yearIndex;
+                        const yearString = `${year}-${year + 1}`;
+                        return (
+                          <SelectItem key={yearString} value={yearString}>
+                            {yearString}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="mt-8 flex justify-end space-x-3">
@@ -186,7 +236,9 @@ export function DataTable<TData, TValue>({
                 </Button>
               </div>
             </form>
+
           </DialogContent>
+          
         </Dialog>
       </div>
       
