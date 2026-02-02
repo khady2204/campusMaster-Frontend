@@ -49,14 +49,14 @@ function EditDialog({ enseignant, onSuccess }: { enseignant: User; onSuccess: ()
       role: enseignant.role,
       createdAt: enseignant.createdAt,
       updatedAt: new Date(),
-      emailVerified: enseignant.emailVerified,
-      active: enseignant.active,
+      is_emailVerified: enseignant.is_emailVerified,
+      is_active: enseignant.is_active,
       lastLoginAt: enseignant.lastLoginAt
     };
 
     try {
       await userService.updateUser(enseignant.id, updatedUser);
-      showToast("success", { message: "Etudiant mis à jour" });
+      showToast("success", { message: "Enseignant mis à jour" });
       setIsOpen(false);
       onSuccess();
     } catch (error) {
@@ -245,8 +245,8 @@ export const createColumns = (onRefresh: () => void): ColumnDef<User>[] => [
         cell: ({ row }) => {
             const etudiant = row.original
             return (
-                <span className={etudiant.active ? "text-green-500 font-medium" : "text-red-500"}>
-                    {etudiant.active ? "Actif" : "Inactif"}
+                <span className={etudiant.is_active ? "text-green-500 font-medium" : "text-red-500"}>
+                    {etudiant.is_active ? "Actif" : "Inactif"}
                 </span>
             )
         },
@@ -293,10 +293,6 @@ export const createColumns = (onRefresh: () => void): ColumnDef<User>[] => [
                                             <p className="font-light text-[#0A3282]/80 dark:text-white">Prénom:</p>
                                             <p className="font-extralight dark:text-white">{enseignant.prenom}</p>
                                         </div>
-                                        <div className="flex space-x-3">
-                                            <p className="font-light text-[#0A3282]/80 dark:text-white">Email:</p>
-                                            <p className="font-extralight dark:text-white">{enseignant.email}</p>
-                                        </div>
                                     </div>
                                     <div>
                                         <div className="flex space-x-3">
@@ -312,6 +308,11 @@ export const createColumns = (onRefresh: () => void): ColumnDef<User>[] => [
                                             <p className="font-extralight dark:text-white">{formatDate(enseignant.updatedAt)}</p>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div className="flex space-x-3">
+                                    <p className="font-light text-[#0A3282]/80 dark:text-white">Email:</p>
+                                    <p className="font-extralight dark:text-white">{enseignant.email}</p>
                                 </div>
                             </div>
                             <div className="mt-10 flex justify-end">

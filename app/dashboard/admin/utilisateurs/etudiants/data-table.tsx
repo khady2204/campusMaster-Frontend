@@ -36,20 +36,23 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   onRefresh?: () => Promise<void>
   isLoading?: boolean
+  pageIndex?: number
+  setPageIndex?: (index: number) => void
+  totalPages?: number
 }
 
 export function DataTable<TData, TValue>({ 
   columns, 
   data, 
   onRefresh,
-  isLoading = false 
+  isLoading = false,
+  pageIndex = 0,
+  setPageIndex = () => {},
+  totalPages = 0,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+  // La pagination est contrôlée par le parent via les props pageIndex, setPageIndex et totalPages
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   
@@ -61,7 +64,6 @@ export function DataTable<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
@@ -69,7 +71,7 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
       columnFilters,
-      pagination,
+      // La pagination est gérée par le parent, donc inutile ici
     },
   })
 
@@ -88,8 +90,8 @@ export function DataTable<TData, TValue>({
       telephone: formData.get("telephone") as string,
       adresse: formData.get("adresse") as string,
       role: Role.ETUDIANT,
-      active: true,
-      emailVerified: true,
+      is_active: true,
+      is_emailVerified: true,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
@@ -303,21 +305,23 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={() => setPageIndex && setPageIndex((pageIndex ?? 0) - 1)}
+          disabled={pageIndex === 0}
+          aria-label="Page précédente"
         >
-          <ChevronLeft className="mr-2 h-4 w-4" />
+          <ChevronLeft className="h-4 w-4" />
         </Button>
 
-        {Array.from({ length: table.getPageCount() }, (_, i) => (
+        {Array.from({ length: totalPages }, (_, i) => (
           <Button
             key={i}
-            variant={i === table.getState().pagination.pageIndex ? "default" : "outline"}
+            variant={i === pageIndex ? "default" : "outline"}
             size="sm"
-            onClick={() => table.setPageIndex(i)}
-            className={cn({
-              "bg-[#0A3282]/90 hover:bg-[#0A3282]/90 text-white": table.getState().pagination.pageIndex === i,
-            })}
+            onClick={() => setPageIndex && setPageIndex(i)}
+            aria-current={i === pageIndex ? "page" : undefined}
+            className={cn(
+              i === pageIndex && "bg-[#0A3282]/90 hover:bg-[#0A3282]/90 text-white"
+            )}
           >
             {i + 1}
           </Button>
@@ -326,13 +330,18 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          onClick={() => setPageIndex && setPageIndex((pageIndex ?? 0) + 1)}
+          disabled={pageIndex === totalPages - 1 || totalPages === 0}
+          aria-label="Page suivante"
         >
-          <ChevronRight className="ml-2 h-4 w-4" />
+          <ChevronRight className="h-4 w-4" />
         </Button>
+
+        <span className="ml-4 text-sm text-gray-600">
+          Page {pageIndex + 1} sur {totalPages}
+        </span>
       </div>
-      
+
     </div>
   )
 }

@@ -18,8 +18,8 @@ export interface User {
   telephone: string;
   adresse: string;
   role: Role;
-  emailVerified?: boolean;
-  active: boolean;
+  is_emailVerified?: boolean;
+  is_active: boolean;
   createdAt: Date;        
   updatedAt: Date;
   lastLoginAt?: Date | null; 
