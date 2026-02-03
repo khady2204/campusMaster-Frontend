@@ -13,6 +13,11 @@ export const getModuleByIdApi = async (id: string): Promise<Module> => {
   return apiClient.get<Module>(`${Modules_ENDPOINT}/${id}`)
 }
 
+// GET - /modules/etudiant/:id
+export const getAllModulesByEtudiantApi = async (id: string): Promise<Module[]> => {
+  return apiClient.get<Module[]>(`${Modules_ENDPOINT}/etudiant/${id}`)
+}
+
 // POST - /modules
 export const createModuleApi = async (data: Module): Promise<Module> => {
   return apiClient.post<Module>(Modules_ENDPOINT, data)

@@ -10,7 +10,7 @@ export const getSemestresApi = async (): Promise<Semestre[]> => {
 
 // GET - /semestres/:id
 export const getSemestreByIdApi = async (id: string): Promise<Semestre> => {
-  return apiClient.get<Semestre>(`semestresEndpoint/${id}`)
+  return apiClient.get<Semestre>(`${SEMESTRES_ENDPOINT}/${id}`)
 }
 
 // POST - /semestres
@@ -20,10 +20,10 @@ export const createSemestreApi = async (data: Semestre): Promise<Semestre> => {
 
 // PUT - /semestres/:id
 export const updateSemestreApi = async (id: string, data: Semestre): Promise<Semestre> => {
-  return apiClient.put<Semestre>(`SEMESTRES_ENDPOINT/${id}`, data)
+  return apiClient.put<Semestre>(`${SEMESTRES_ENDPOINT}/${id}`, data)
 }
 
 // DELETE - /semestres/:id
 export const deleteSemestreApi = async (id: string): Promise<void> => {
-  await apiClient.delete<void>(`SEMESTRES_ENDPOINT/${id}`)
+  await apiClient.delete<void>(`${SEMESTRES_ENDPOINT}/${id}`)
 }

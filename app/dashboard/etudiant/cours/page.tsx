@@ -18,11 +18,12 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
+import { useAuth } from "@/core/contexts/authContext";
 
 export default function PageCours() {
+     const { user } = useAuth()
     
     const [cours, setCours] = useState<Cours[]>([]);
-    const [modules, setModules] = useState<Module[]>([]);
     const [filteredCours, setFilteredCours] = useState<Cours[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -35,13 +36,12 @@ export default function PageCours() {
         try {
             setLoading(true);
             setError(null);
-            const [coursData, modulesData] = await Promise.all([
-                coursService.getAllCours(),
-                moduleService.getAllModules()
-            ]);
+            if (!user?.id) {
+                setCours([]);
+                return;
+            }
+            const coursData: Cours[] = await coursService.getAllCoursByEtudiant(user.id);
             setCours(coursData);
-            setModules(modulesData);
-            setFilteredCours(coursData);
         } catch (e) {
             const message =
                 e instanceof Error
@@ -84,7 +84,7 @@ export default function PageCours() {
                     Cours
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                    Liste des cours de la plateforme.
+                    Liste de mes cours disponibles
                 </p>
             </div>
 
@@ -111,14 +111,14 @@ export default function PageCours() {
                                     <SelectValue placeholder="Tous les modules" />
                                 </div>
                             </SelectTrigger>
-                            <SelectContent>
+                            {/* <SelectContent>
                                 <SelectItem value="all">Tous les modules</SelectItem>
                                 {modules.map((module) => (
                                     <SelectItem key={module.id} value={module.id!}>
                                         {module.titreModule}
                                     </SelectItem>
                                 ))}
-                            </SelectContent>
+                            </SelectContent> */}
                         </Select>
                     </div>
                 </div>
@@ -163,7 +163,7 @@ export default function PageCours() {
                     ) : (
                         <>
                             {/* Affichage du nombre de résultats */}
-                            <div className="text-sm text-muted-foreground">
+                            {/* <div className="text-sm text-muted-foreground">
                                 {filteredCours.length} cours trouvé{filteredCours.length > 1 ? "s" : ""}
                                 {selectedModule !== "all" && (
                                     <span>
@@ -173,10 +173,10 @@ export default function PageCours() {
                                         &quot;
                                     </span>
                                 )}
-                            </div>
+                            </div> */}
 
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {filteredCours.map((cours) => (
+                                {/* {filteredCours.map((cours) => (
                                     <CoursCard
                                         key={cours.id}
                                         cours={cours}
@@ -186,7 +186,7 @@ export default function PageCours() {
                                             navigate.push(`/dashboard/admin/cours/${cours.id}`)
                                         }
                                     />
-                                ))}
+                                ))} */}
                             </div>
                         </>
                     )}

@@ -29,8 +29,7 @@ import { Plus, Edit2, Trash2, Search } from "lucide-react";
 import { showToast } from "@/core/services/toast.service";
 import { Textarea } from "@/components/ui/textarea";
 import { User } from "@/core/model/user/user.model";
-import { en } from "zod/v4/locales";
-import EnseignantsPage from "../utilisateurs/enseignants/page";
+
 
 export default function Modules() {
     const { user } = useAuth();
@@ -68,7 +67,7 @@ export default function Modules() {
         try {
             setLoading(true);
             setError(null);
-            const listUsers = await userService.getUsers();
+            const listUsers = await userService.getAllUsers();
             const EnseignantsOnly = listUsers.filter(user => user.role === 'ENSEIGNANT');
             setEnseignants(EnseignantsOnly);
         } catch (e) {
@@ -99,13 +98,14 @@ export default function Modules() {
     // Ajout d'un module
     const handleAddModule = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setIsSubmitting(true);
+        setIsSubmitting(false);
 
         const formData = new FormData(event.currentTarget);
         const newModule: Module = {
             codeModule: "MOD" + Date.now() + Math.floor(Math.random() * 1000),
             titreModule: formData.get("titre") as string,
             description: formData.get("description") as string,
+            responsable: formData.get("responsable") as string,
             createdBy: user?.id || "",
             updatedBy: user?.id || "",
             createdAt: new Date(),
@@ -119,7 +119,6 @@ export default function Modules() {
             showToast("success", { message: "Module ajouté avec succès" });
             setIsAddDialogOpen(false);
             await fetchModules();
-            event.currentTarget.reset();
         } catch (error) {
             console.error("Erreur lors de l'ajout :", error);
             showToast("error", { message: "Erreur lors de l'ajout du module" });
@@ -195,7 +194,7 @@ export default function Modules() {
 
                                 <label className="block">
                                     <span className="block text-sm font-medium mb-2">Responsable du module</span>
-                                    <Select name="responsableModule" disabled={isSubmitting}>
+                                    <Select name="responsable">
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Choisir un responsable" />
                                         </SelectTrigger>
@@ -208,20 +207,6 @@ export default function Modules() {
                                         </SelectContent>
                                     </Select>
                                     
-                                    
-                                    {/* <select
-                                        name="responsableModule"
-                                        required
-                                        disabled={isSubmitting}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    >
-                                        <option value="">Choisir un responsable</option>
-                                        {users.map((user) => (
-                                            <option key={user.id} value={user.id}>
-                                                {user.prenom} {user.nom}
-                                            </option>
-                                        ))}
-                                    </select> */}
                                 </label>
 
                             </div>
@@ -325,14 +310,14 @@ function ModuleCard({
         setIsSubmitting(true);
 
         const formData = new FormData(event.currentTarget);
-        const updatedModule = {
+        const updatedModule: Module = {
             id: module.id,
             codeModule: formData.get("code") as string,
             titreModule: formData.get("titre") as string,
             description: formData.get("description") as string,
             createdBy: formData.get("createdBy") as string,
             updatedBy: formData.get("updatedBy") as string,
-            responsableModule: formData.get("responsableModule") as string,
+            responsable: formData.get("responsableModule") as string,
             createdAt: new Date(),
             updatedAt: new Date(),
         };
@@ -419,9 +404,9 @@ function ModuleCard({
                                     <span className="block text-sm font-medium mb-2">Responsable du module</span>
                                     <Select
                                         name="responsable" 
-                                        defaultValue={module.responsable?.id}
+                                        defaultValue={module.responsable}
                                         disabled={isSubmitting}
-                                        value={module.responsable?.id}
+                                        value={module.responsable}
                                     >
                                         <SelectTrigger className="w-full">
                                             <SelectValue/>

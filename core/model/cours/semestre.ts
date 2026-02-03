@@ -3,5 +3,8 @@ export interface Semestre {
     nom: string;
     description: string;
     annee: string;
-    createdBy: string;
+    createdBy: string | object;
+    createdAt: Date;
+    updatedAt: Date;
+    updatedBy: string;
 }

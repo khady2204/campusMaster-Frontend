@@ -13,6 +13,16 @@ export const getCoursByIdApi = async (id: string): Promise<Cours> => {
   return apiClient.get<Cours>(`${Cours_ENDPOINT}/${id}`)
 }
 
+// GET - /cours/etudiant/:id
+export const getAllCoursByEtudiantApi = async (id: string): Promise<Cours[]> => {
+  return apiClient.get<Cours[]>(`${Cours_ENDPOINT}/etudiant/${id}`)
+}
+
+// GET - /cours/module/:id
+export const getAllCoursByModuleApi = async (id: string): Promise<Cours[]> => {
+  return apiClient.get<Cours[]>(`${Cours_ENDPOINT}/module/${id}`)
+}
+
 // POST - /cours
 export const createCoursApi = async (data: Cours): Promise<Cours> => {
   return apiClient.post<Cours>(Cours_ENDPOINT, data)

@@ -1,6 +1,6 @@
 // Service de gestion des cours
 
-import { createCoursApi, deleteCoursApi, getCoursApi, getCoursByIdApi, updateCoursApi } from "../api/cours.api";
+import { createCoursApi, deleteCoursApi, getAllCoursByEtudiantApi, getCoursApi, getCoursByIdApi, updateCoursApi } from "../api/cours.api";
 import { Cours } from "../model/cours/cours";
 
 
@@ -20,6 +20,26 @@ class CoursService {
     async getCoursById(id: string): Promise<Cours> {
         try {
             const response = await getCoursByIdApi(id);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Récupérer tous les cours d'un etudiant par son ID
+    async getAllCoursByEtudiant(id: string): Promise<Cours[]> {
+        try {
+            const response = await getAllCoursByEtudiantApi(id);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Récupérer tous les cours d'un module par son ID
+    async getAllCoursByModule(id: string): Promise<Cours[]> {
+        try {
+            const response = await getAllCoursByEtudiantApi(id);
             return response;
         } catch (error) {
             throw error;

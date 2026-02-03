@@ -65,6 +65,12 @@ export const menuConfig = {
         ],
       },
       {
+        title: "Enrollements",
+        url: "/dashboard/admin/enrollements", 
+        icon: GraduationCap,
+        isActive: true,
+      },
+      {
         title: "Semestres",
         url: "/dashboard/admin/semestres",
         icon: Calendar
@@ -154,9 +160,9 @@ export const menuConfig = {
         isActive: true,
       },
       {
-        title: "Mes cours",
-        url: "/dashboard/cours",
-        icon: BookOpen,
+        title: "Modules et cours",
+        url: "/dashboard/etudiant/modules",
+        icon: GraduationCap,
       },
       {
         title: "Devoirs",

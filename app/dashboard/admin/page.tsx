@@ -1,37 +1,55 @@
-import { Database, Megaphone, Package, TrendingUp, UserPlus, Users } from "lucide-react";
+"use client";
 
-export default function page() {
+import { userService } from "@/core/services/user.service";
+import { moduleService } from "@/core/services/module.service";
+import { Database, GraduationCap, Megaphone, Package, TrendingUp, UserPlus, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { coursService } from "@/core/services/cours.service";
+import { enrollementService } from "@/core/services/enrollement.service";
+
+export default function AdminDashboard() {
+
+    const [listUsers, setListUsers] = useState(0);
+    const [listModules, setListModules] = useState(0);
+    const [listCours, setListCours] = useState(0);
+    const [listEnrollements, setListEnrollements] = useState(0);
+
+    useEffect(() => {
+            try {
+                userService.getAllUsers().then((res) => {
+                    setListUsers(res.length);
+                });
+                moduleService.getAllModules().then((res) => {
+                    setListModules(res.length);
+                });
+                coursService.getAllCours().then((res) => {
+                    setListCours(res.length);
+                });
+                enrollementService.getAllEnrollements().then((res) => {
+                    setListEnrollements(res.length);
+                });
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            }
+        }
+    , []);
+    
     return (
         <div className="space-y-5">
             <div className="grid md:grid-cols-4 lg:grid-cols-4 gap-4">
                 <div className="shadow border rounded-2xl space-y-1 flex flex-col justify-between p-4">
                     <div className="flex justify-between items-center">
-                        <p className="font-medium text-[#0A3282]/80 dark:text-white">Nbre étudiants</p>
+                        <p className="font-medium text-[#0A3282]/80 dark:text-white">Utilisateurs</p>
                         <span className="bg-[#0A3282]/90 text-white dark:bg-gray-700 p-2 rounded">
                             <Users className="h-4"/>
                         </span>
                     </div>
                     <div className="">
-                        <p className="font-bold text-2xl">150</p>
+                        <p className="font-bold text-2xl"> {listUsers} </p>
                     </div>
                     <div className="flex items-center">
                         <TrendingUp className="mr-2 h-4 text-[#0A3282]" />
-                        <p className="font-light text-sm">plus de 50% d&apos;augmentation</p>
-                    </div>
-                </div>
-                <div className="shadow border rounded-2xl space-y-1 flex flex-col justify-between p-4">
-                    <div className="flex justify-between items-center">
-                        <p className="font-medium text-[#0A3282]/90 dark:text-white">Nbre enseignants</p>
-                        <span className="bg-[#0A3282] text-white dark:bg-gray-700 p-2 rounded">
-                            <Users className="h-4"/>
-                        </span>
-                    </div>
-                    <div className="">
-                        <p className="font-bold text-2xl">15</p>
-                    </div>
-                    <div className="flex items-center">
-                        <TrendingUp className="mr-2 h-4 text-[#0A3282]" />
-                        <p className="font-light text-sm">plus de 10% d&apos;augmentation</p>
+                        <p className="font-light text-sm">utilisateurs inscrits</p>
                     </div>
                 </div>
                 <div className="shadow border rounded-2xl space-y-1 flex flex-col justify-between p-4">
@@ -42,7 +60,7 @@ export default function page() {
                         </span>
                     </div>
                     <div className="">
-                        <p className="font-bold text-2xl">150</p>
+                        <p className="font-bold text-2xl"> {listModules} </p>
                     </div>
                     <div className="flex items-center">
                         <TrendingUp className="mr-2 h-4 text-[#0A3282]" />
@@ -51,17 +69,32 @@ export default function page() {
                 </div>
                 <div className="shadow border rounded-2xl space-y-1 flex flex-col justify-between p-4">
                     <div className="flex justify-between items-center">
-                        <p className="font-medium text-[#0A3282]/80 dark:text-white">Nbre étudiants</p>
+                        <p className="font-medium text-[#0A3282]/90 dark:text-white">Nbre Cours</p>
                         <span className="bg-[#0A3282] text-white dark:bg-gray-700 p-2 rounded">
                             <Users className="h-4"/>
                         </span>
                     </div>
                     <div className="">
-                        <p className="font-bold text-2xl">150</p>
+                        <p className="font-bold text-2xl"> {listCours} </p>
                     </div>
                     <div className="flex items-center">
                         <TrendingUp className="mr-2 h-4 text-[#0A3282]" />
-                        <p className="font-light text-sm">plus de 50% d&apos;augmentation</p>
+                        <p className="font-light text-sm">Cours disponibles</p>
+                    </div>
+                </div>
+                <div className="shadow border rounded-2xl space-y-1 flex flex-col justify-between p-4">
+                    <div className="flex justify-between items-center">
+                        <p className="font-medium text-[#0A3282]/80 dark:text-white">Nbre d&apos;enrolements</p>
+                        <span className="bg-[#0A3282] text-white dark:bg-gray-700 p-2 rounded">
+                            <GraduationCap className="h-4"/>
+                        </span>
+                    </div>
+                    <div className="">
+                        <p className="font-bold text-2xl"> {listEnrollements} </p>
+                    </div>
+                    <div className="flex items-center">
+                        <TrendingUp className="mr-2 h-4 text-[#0A3282]" />
+                        <p className="font-light text-sm">Etudiants enrollés</p>
                     </div>
                 </div>
             </div>

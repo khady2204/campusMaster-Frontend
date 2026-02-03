@@ -25,12 +25,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DialogClose, DialogHeader } from "@/components/ui/dialog"
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Plus } from "lucide-react"
 import { showToast } from "@/core/services/toast.service"
-import { semestreService } from "@/core/services/semestre.service"
-import { Semestre } from "@/core/model/cours/semestre"
-import { Textarea } from "@/components/ui/textarea"
 import {
   Select,
   SelectContent,
@@ -41,6 +37,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useAuth } from "@/core/contexts/authContext"
+import { Enrollement } from "@/core/model/cours/enrollement"
+import { enrollementService } from "@/core/services/enrollement.service"
+import { Module } from "@/core/model/cours/module"
+import { User } from "@/core/model/user/user.model"
+import { moduleService } from "@/core/services/module.service"
+import { userService } from "@/core/services/user.service"
+import { useEffect } from "react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -63,7 +66,9 @@ export function DataTable<TData, TValue>({
   });
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const { user, isLoggedIn } = useAuth();
+  const [listModules, setListModules] = React.useState<Array<Module>>([]);
+  const [listEtudiants, setListEtudiants] = React.useState<Array<User>>([]);
+  const { user } = useAuth();
 
   // Utiliser une ref pour le formulaire
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -85,28 +90,24 @@ export function DataTable<TData, TValue>({
     },
   })
 
-  const handleAddSemestre = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleAddEnrollement = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsSubmitting(true)
 
     const formData = new FormData(event.currentTarget)
 
-    const newSemestre: Semestre = {
-      nom: formData.get("nom") as string,
-      description: formData.get("description") as string,
-      annee: formData.get("annee") as string,
+    const newEnrollement: Enrollement = {
+      etudiantId: formData.get("etudiantId") as string,
+      moduleId: formData.get("moduleId") as string,
       createdBy: user?.id || "n/a",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      updatedBy: user?.id || "n/a",
     }
 
     // console.log("Données de la nouvelle semestre: ", newSemestre);
 
 
     try {
-      await semestreService.createSemestre(newSemestre);
-      showToast("success", { message: "Semestre ajouté avec succès" });
+      await enrollementService.createEnrollement(newEnrollement);
+      showToast("success", { message: "Enrollement créé avec succès" });
 
       // Réinitialiser le formulaire avec vérification
       if (formRef.current) {
@@ -122,13 +123,30 @@ export function DataTable<TData, TValue>({
       }
     } catch (error) {
       console.error("Erreur lors de l'ajout :", error);
-      showToast("error", { message: "Erreur lors de l'ajout du semestre" });
+      showToast("error", { message: "Erreur lors de l'ajout de l'enrollement" });
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  // Réinitialiser le formulaire quand le dialog se ferme
+  // Charger modules et étudiants en un seul useEffect
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const modules = await moduleService.getAllModules();
+        setListModules(modules);
+        const users = await userService.getAllUsers();
+        const etudiants = users.filter(user => user.role === "ETUDIANT");
+        setListEtudiants(etudiants);
+      } catch (error) {
+        console.error("Erreur lors du chargement des données :", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+  // Effacer le formulaire lorsqu'on ferme le dialog
   React.useEffect(() => {
     if (!isDialogOpen && formRef.current) {
       formRef.current.reset();
@@ -142,9 +160,9 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center py-4">
           <Input
             placeholder="Rechercher ..."
-            value={(table.getColumn("nom")?.getFilterValue() as string) ?? ""}
+            value={(table.getColumn("etudiant")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              table.getColumn("nom")?.setFilterValue(event.target.value)
+              table.getColumn("etudiant")?.setFilterValue(event.target.value)
             }
             className="min-w-md"
           />
@@ -154,68 +172,62 @@ export function DataTable<TData, TValue>({
           <DialogTrigger asChild>
             <Button size="sm" className="flex items-center gap-1 bg-[#0A3282] text-white h-10 hover:bg-[#0A3282]/90">
               <Plus className="mr-1" />
-              Ajouter un semestre
+              Enroller un étudiant
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="text-[#0A3282] dark:text-white">
-                Ajouter un semestre
+                Effectuer un nouvel enrollement
               </DialogTitle>
               <DialogDescription>
-                Veuillez remplir les informations du semestre
+                Veuillez remplir les informations pour créer un nouvel enrollement
               </DialogDescription>
             </DialogHeader>
 
-            <form ref={formRef} onSubmit={handleAddSemestre} className="space-y-4">
-              <div className="">
-                <label className="block">
-                  <span className="block text-sm font-medium mb-2">Nom du semestre</span>
-                  <Input
-                    type="text"
-                    name="nom"
-                    required
-                    placeholder="Ex: Semestre 1"
-                    disabled={isSubmitting}
-                  />
-                </label>
-              </div>
-
-              <div className="">
-                <label className="block">
-                  <span className="block text-sm font-medium mb-2">Description du semeste</span>
-                  <Textarea
-                    name="description"
-                    rows={4}
-                    required
-                    placeholder="Ex: Description du semestre 1"
-                    disabled={isSubmitting}
-                  />
-                </label>
-              </div>
+            <form ref={formRef} onSubmit={handleAddEnrollement} className="space-y-4">
 
               <div className="space-x-3 w-full">
-                <label className="block text-sm font-medium mb-2">Année</label>
+                <label className="block text-sm font-medium mb-2">Etudiant</label>
                 <Select
-                  name="annee"
+                  name="etudiantId"
                   required
                   disabled={isSubmitting}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Ex: 2026" />
+                    <SelectValue placeholder="Sélectionner un étudiant" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Année</SelectLabel>
-                      {[...Array(5)].map((_, yearIndex) => {
-                        const year = new Date().getFullYear() - yearIndex;
-                        const yearString = `${year}`;
-                        return (
-                          <SelectItem key={yearString} value={yearString}>
-                            {yearString}
-                          </SelectItem>
-                        );
-                      })}
+                      <SelectLabel>Etudiants</SelectLabel>
+                      {listEtudiants.map((etudiant) => (
+                        <SelectItem key={etudiant.id ?? ''} value={etudiant.id ?? ''}>
+                          {etudiant.nom} {etudiant.prenom}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-x-3 w-full">
+                <label className="block text-sm font-medium mb-2">Module</label>
+                <Select
+                  name="moduleId"
+                  required
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Sélectionner un module" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Modules</SelectLabel>
+                      {listModules.map((module) => (
+                        <SelectItem key={module.id ?? ''} value={module.id ?? ''}>
+                          {module.titreModule}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
