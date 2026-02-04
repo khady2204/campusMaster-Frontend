@@ -129,19 +129,26 @@ export default function PageCours() {
         setIsSubmitting(true);
 
         const formData = new FormData(event.currentTarget);
-        // const newCours: Cours = {
-        //     titre: formData.get("titre") as string,
-        //     moduleId: formData.get("moduleId") as string,
-        //     contenuTextuel: formData.get("contenuTextuel") as string,
 
-        // };
+        const newCours = {
+            moduleId: formData.get("moduleId") as string,
+            semestreId: formData.get("semestreId") as string,
+            titreCours: formData.get("titreCours") as string,
+            description: formData.get("description") as string,
+
+            // champs requis par le backend
+            contenuTextuel: formData.get("description") as string, // temporaire
+            ordre: 1,
+            typeCours: "CLASSIQUE",
+            createdBy: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // plus tard depuis auth
+        };
 
         try {
-            // await coursService.createCours(newCours);
+            await coursService.createCours(newCours);
+
             showToast("success", { message: "Cours ajouté avec succès" });
             setIsAddDialogOpen(false);
             await fetchCours();
-            event.currentTarget.reset();
         } catch (error) {
             console.error("Erreur lors de l'ajout :", error);
             showToast("error", { message: "Erreur lors de l'ajout du cours" });
@@ -197,7 +204,7 @@ export default function PageCours() {
                 </div>
 
                 {/* Bouton d'ajout */}
-                    <div className="flex flex-row gap-2 justify-end">
+                <div className="flex flex-row gap-2 justify-end">
                     <Button
                         size="sm"
                         className="flex items-center gap-1 bg-[#0A3282] text-white hover:bg-[#0A3282]/90 w-full md:w-auto"
@@ -245,7 +252,6 @@ export default function PageCours() {
                                     
                 </div>
             </div>
-
             {/* États de chargement et erreur */}
             {loading && (
                 <div className="flex justify-center items-center h-40">
@@ -305,7 +311,7 @@ export default function PageCours() {
                                         modules={modules}
                                         onUpdate={fetchCours}
                                         onNavigate={() =>
-                                            navigate.push(`/dashboard/admin/cours/${cours.id}`)
+                                            navigate.push(`/dashboard/enseignant/cours/${cours.id}`)
                                         }
                                     />
                                 ))}
@@ -549,7 +555,8 @@ function CoursCard({
 
                 </div>
             </div>
-        </div>
+        </div> 
+        
     );
 }
 

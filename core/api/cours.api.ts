@@ -3,6 +3,11 @@ import { Cours } from '../model/cours/cours';
 
 const Cours_ENDPOINT = '/cours-service/api/cours';
 
+// GET cours/module
+export const getCoursByModuleApi = (moduleId: string): Promise<Cours[]> => {
+  return apiClient.get<Cours[]>(`/cours-service/api/cours/module/${moduleId}`);
+};
+
 // GET - /cours
 export const getCoursApi = async (): Promise<Cours[]> => {
   return apiClient.get<Cours[]>(Cours_ENDPOINT)
