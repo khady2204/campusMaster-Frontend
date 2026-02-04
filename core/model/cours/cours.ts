@@ -1,3 +1,4 @@
+import { User } from "../user/user.model";
 import { Module } from "./module";
 import { Semestre } from "./semestre";
 import { Support } from "./support";
@@ -14,8 +15,8 @@ export interface Cours {
     updatedAt: Date;
     createdBy: string;
     updatedBy: string;
+    enseignant?: User;
     module?: Module;
     semestre?: Semestre;
-    supports?: Support[];
-    enrollements?: string[];
+    supports?: Partial<Support>[];
 }

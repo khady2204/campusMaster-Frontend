@@ -106,19 +106,9 @@ export const menuConfig = {
         isActive: true,
       },
       {
-        title: "Mes cours",
-        url: "/dashboard/cours",
-        icon: BookOpen,
-        items: [
-          {
-            title: "Liste des cours",
-            url: "/dashboard/cours",
-          },
-          {
-            title: "Créer un cours",
-            url: "/dashboard/cours/create",
-          },
-        ],
+        title: "Modules et cours",
+        url: "/dashboard/enseignant/modules",
+        icon: GraduationCap,
       },
       {
         title: "Étudiants",

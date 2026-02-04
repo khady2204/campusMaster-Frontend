@@ -1,6 +1,6 @@
 // Service de gestion des modules
 
-import { createModuleApi, deleteModuleApi, getAllModulesByEtudiantApi, getModuleByIdApi, getModulesApi, updateModuleApi } from "../api/module.api";
+import { createModuleApi, deleteModuleApi, getAllModulesByEnseignantApi, getAllModulesByEtudiantApi, getModuleByIdApi, getModulesApi, updateModuleApi } from "../api/module.api";
 import { Module } from "../model/cours/module";
 
 
@@ -30,6 +30,16 @@ class ModuleService {
     async getAllModulesByEtudiant(id: string): Promise<Module[]> {
         try {
             const response = await getAllModulesByEtudiantApi(id);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Récupérer tous les modules d'un responsable par son ID
+    async getAllModulesByResponsable(id: string): Promise<Module[]> {
+        try {
+            const response = await getAllModulesByEnseignantApi(id);
             return response;
         } catch (error) {
             throw error;

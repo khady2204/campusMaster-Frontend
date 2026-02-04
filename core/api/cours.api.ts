@@ -23,6 +23,11 @@ export const getAllCoursByModuleApi = async (id: string): Promise<Cours[]> => {
   return apiClient.get<Cours[]>(`${Cours_ENDPOINT}/module/${id}`)
 }
 
+// GET - /cours/enseignant/:id
+export const getAllCoursByEnseignantApi = async (id: string): Promise<Cours[]> => {
+  return apiClient.get<Cours[]>(`${Cours_ENDPOINT}/enseignant/${id}`)
+}
+
 // POST - /cours
 export const createCoursApi = async (data: Cours): Promise<Cours> => {
   return apiClient.post<Cours>(Cours_ENDPOINT, data)

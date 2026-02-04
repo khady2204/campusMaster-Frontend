@@ -1,8 +1,10 @@
 export interface Support {
-    id: string;
-    nom: string;
-    url: string;
-    coursId: string;
-    createdAt: Date;
-    updatedAt: Date;
+    id?: string;
+    coursId: string,
+    nomFichier: string,
+    cheminFichier: string,
+    description: string,
+    typeSupport: string,
+    formatSupport: string,
+    createdBy: string
 }

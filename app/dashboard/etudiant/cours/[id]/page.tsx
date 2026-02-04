@@ -85,7 +85,7 @@ export default function DetailsCoursPage() {
                     </div>
                 </TabsContent>
                 <TabsContent value="enseignant">
-                    <div>
+                    {/* <div>
                         <p className="font-semibold">Enseignant</p>
                         <p>{cours.module?.responsable?.username}</p>
                     </div>
@@ -96,7 +96,7 @@ export default function DetailsCoursPage() {
                     <div>
                         <p className="font-semibold">Role</p>
                         <p>{cours.module?.responsable?.role}</p>
-                    </div>
+                    </div> */}
                 </TabsContent>
                 <TabsContent value="supports">
                     {/* <div className="space-y-4">
